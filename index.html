@@ -3,173 +3,151 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StatsValue Pro + Cuotas Betplay & Rushbet</title>
+  <title>StatsValue V2 — Pro Analytics & Combined Bets</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans min-h-screen pb-12">
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-12">
 
-  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-20 shadow-lg">
-    <div class="max-w-xl mx-auto flex justify-between items-center">
-      <h1 class="text-xl font-bold text-emerald-400">⚽ StatsValue + Odds Pro</h1>
-      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">Análisis + Betplay & Rushbet</span>
+  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-30 shadow-2xl backdrop-blur-md bg-opacity-90">
+    <div class="max-w-2xl mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-extrabold text-emerald-400 tracking-wide">⚽ StatsValue V2 Pro</h1>
+      <span class="text-[11px] bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-bold border border-emerald-500/30">
+        Algoritmo +EV (60-80% Acierto)
+      </span>
     </div>
   </header>
 
-  <main class="max-w-xl mx-auto p-4 space-y-6">
+  <main class="max-w-2xl mx-auto p-4 space-y-6">
 
-    <!-- Selección de Partido Automatizada -->
-    <section class="bg-slate-800 rounded-xl p-4 border border-slate-700 space-y-3">
+    <!-- Selector de Partidos -->
+    <section class="bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-3 shadow-lg">
       <div class="flex justify-between items-center">
-        <label class="text-xs font-bold text-slate-300">Seleccionar Partido:</label>
-        <span id="matchStatus" class="text-[10px] text-emerald-400 font-semibold">Listo</span>
+        <label class="text-xs font-bold text-slate-300">Partido en Lista:</label>
+        <span id="matchStatus" class="text-[11px] text-emerald-400 font-bold">Cargando...</span>
       </div>
 
-      <select id="matchSelect" onchange="analyzeSelectedFixture()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-        <option value="">Cargando partidos...</option>
+      <select id="matchSelect" onchange="analyzeSelectedFixture()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500">
+        <option value="">Cargando partidos de hoy...</option>
       </select>
-
-      <button onclick="fetchLiveMatches()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-2 rounded-lg text-xs font-bold transition-all">
-        Actualizar Lista de Partidos
-      </button>
     </section>
 
-    <!-- Top Valor Esperado / Apuestas Clave -->
-    <section class="space-y-3">
-      <h2 class="text-base font-bold text-emerald-400 flex items-center gap-2">
-        <span>🚀</span> TOP Sugerencias de Apuesta (+EV)
+    <!-- Análisis Táctico y Necesidades del Partido -->
+    <section id="tacticalSection" class="hidden bg-slate-900/80 border border-indigo-500/30 rounded-2xl p-4 space-y-2">
+      <h2 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
+        <span>📋</span> Análisis Táctico de Formaciones y Tendencia
       </h2>
-      <div id="topPicks" class="space-y-2">
-        <p class="text-xs text-slate-500 italic">Selecciona un partido para ver las mejores sugerencias...</p>
-      </div>
+      <p id="tacticalText" class="text-xs text-slate-300 leading-relaxed italic"></p>
     </section>
 
-    <!-- Plantilla Completa de Jugadores con Métricas + Comparador -->
+    <!-- Apuesta Combinada Destacada -->
+    <section id="combinedSection" class="hidden bg-gradient-to-r from-emerald-950/60 to-slate-900 border border-emerald-500/50 rounded-2xl p-4 space-y-2 shadow-xl">
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+          <span>🔥</span> Sugerencia Combinada (Same Game Parlay)
+        </h2>
+        <span id="combinedOddBadge" class="bg-emerald-500 text-slate-950 text-xs px-2.5 py-0.5 rounded-full font-black"></span>
+      </div>
+      <div id="combinedContent" class="text-xs space-y-1 text-slate-200"></div>
+    </section>
+
+    <!-- Lista de Jugadores + Análisis Individual -->
     <section class="space-y-3">
       <div class="flex justify-between items-center">
-        <h2 class="text-base font-bold text-white flex items-center gap-2">
-          <span>👥</span> Análisis de Jugadores y Cuotas
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <span>📊</span> Métricas, Proyecciones y Cuotas
         </h2>
-        <div class="flex gap-1 text-xs">
-          <button onclick="filterTeam('ALL')" class="px-2 py-1 bg-slate-700 rounded font-medium text-slate-300">Todos</button>
-          <button onclick="filterTeam('HOME')" class="px-2 py-1 bg-slate-800 rounded font-medium text-slate-400">Local</button>
-          <button onclick="filterTeam('AWAY')" class="px-2 py-1 bg-slate-800 rounded font-medium text-slate-400">Visitante</button>
+        <div class="flex gap-1 text-[11px]">
+          <button onclick="filterTeam('ALL')" class="px-2.5 py-1 bg-slate-800 rounded-lg text-slate-300 font-bold">Todos</button>
+          <button onclick="filterTeam('HOME')" class="px-2.5 py-1 bg-slate-800 rounded-lg text-slate-400 font-bold">Local</button>
+          <button onclick="filterTeam('AWAY')" class="px-2.5 py-1 bg-slate-800 rounded-lg text-slate-400 font-bold">Visitante</button>
         </div>
       </div>
 
-      <div id="playersList" class="space-y-3"></div>
+      <div id="playersList" class="space-y-4"></div>
     </section>
 
   </main>
 
   <script>
     const BACKEND_URL = "https://stats-backend-jpd3.onrender.com";
-    const PRIORITY_LEAGUE_IDS = [2, 3, 39, 140, 135, 78, 61, 239, 13, 11, 71, 128];
-
-    let rawLiveFixtures = [];
     let currentPlayers = [];
     let currentFilter = 'ALL';
 
-    document.addEventListener("DOMContentLoaded", () => {
-      fetchLiveMatches();
-    });
+    document.addEventListener("DOMContentLoaded", fetchLiveMatches);
 
     async function fetchLiveMatches() {
       const statusEl = document.getElementById('matchStatus');
-      statusEl.textContent = "Cargando...";
-
       try {
-        // Cálculo preciso de la fecha local (evita desfases por UTC)
         const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const today = `${year}-${month}-${day}`;
+        const today = now.toISOString().split('T')[0];
 
         const res = await fetch(`${BACKEND_URL}/matches?date=${today}`);
         const data = await res.json();
 
         if (data.error) {
           statusEl.textContent = "Error servidor";
-          alert("Error desde el servidor: " + data.error);
           return;
         }
 
-        rawLiveFixtures = data.response || [];
+        const matches = data.response || [];
         const select = document.getElementById('matchSelect');
         select.innerHTML = '';
 
-        if (rawLiveFixtures.length === 0) {
-          select.innerHTML = '<option value="">No hay partidos programados hoy</option>';
-          statusEl.textContent = "Sin partidos";
+        if (matches.length === 0) {
+          select.innerHTML = '<option value="">Sin partidos hoy</option>';
+          statusEl.textContent = "Sin datos";
           return;
         }
 
-        const priorityMatches = [];
-        const otherMatches = [];
-
-        rawLiveFixtures.forEach(item => {
-          if (PRIORITY_LEAGUE_IDS.includes(item.league.id)) {
-            priorityMatches.push(item);
-          } else {
-            otherMatches.push(item);
-          }
+        matches.forEach(item => {
+          const opt = document.createElement('option');
+          opt.value = item.fixture.id;
+          opt.textContent = `[${item.league.name}] ${item.teams.home.name} vs ${item.teams.away.name}`;
+          select.appendChild(opt);
         });
 
-        if (priorityMatches.length > 0) {
-          const optGroupTop = document.createElement('optgroup');
-          optGroupTop.label = "⭐ LIGAS TOP Y SUDAMÉRICA";
-          priorityMatches.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item.fixture.id;
-            opt.textContent = `[${item.league.name}] ${item.teams.home.name} vs ${item.teams.away.name}`;
-            optGroupTop.appendChild(opt);
-          });
-          select.appendChild(optGroupTop);
-        }
-
-        if (otherMatches.length > 0) {
-          const optGroupOther = document.createElement('optgroup');
-          optGroupOther.label = "🌐 Otras Ligas";
-          otherMatches.forEach(item => {
-            const opt = document.createElement('option');
-            opt.value = item.fixture.id;
-            opt.textContent = `[${item.league.name}] ${item.teams.home.name} vs ${item.teams.away.name}`;
-            optGroupOther.appendChild(opt);
-          });
-          select.appendChild(optGroupOther);
-        }
-
-        statusEl.textContent = `${priorityMatches.length} Top / ${rawLiveFixtures.length} Total`;
+        statusEl.textContent = `${matches.length} partidos`;
         analyzeSelectedFixture();
 
       } catch (e) {
-        statusEl.textContent = "Error Backend";
+        statusEl.textContent = "Error de conexión";
       }
     }
 
     async function analyzeSelectedFixture() {
       const fixtureId = document.getElementById('matchSelect').value;
-      const statusEl = document.getElementById('matchStatus');
-
       if (!fixtureId) return;
 
-      statusEl.textContent = "Calculando...";
+      document.getElementById('matchStatus').textContent = "Analizando...";
 
       try {
         const response = await fetch(`${BACKEND_URL}/analyze-fixture?fixture=${fixtureId}`);
-        
-        if (!response.ok) {
-          throw new Error("Error en la petición a Render");
+        const data = await response.json();
+
+        currentPlayers = data.players || [];
+
+        // Mostrar Análisis Táctico
+        if (data.tacticalAnalysis) {
+          document.getElementById('tacticalSection').classList.remove('hidden');
+          document.getElementById('tacticalText').textContent = data.tacticalAnalysis;
         }
 
-        const data = await response.json();
-        currentPlayers = data.players || [];
-        statusEl.textContent = "Listo";
+        // Mostrar Combinada
+        if (data.combinedBet) {
+          document.getElementById('combinedSection').classList.remove('hidden');
+          document.getElementById('combinedOddBadge').textContent = `Cuota: ${data.combinedBet.combinedOdd}`;
+          document.getElementById('combinedContent').innerHTML = `
+            <p>• <b>Leg 1:</b> ${data.combinedBet.leg1}</p>
+            <p>• <b>Leg 2:</b> ${data.combinedBet.leg2}</p>
+            <p class="text-[10px] text-amber-400 mt-1"><b>Gestión de Riesgo:</b> Usar ${data.combinedBet.recommendedStake}</p>
+          `;
+        }
+
+        document.getElementById('matchStatus').textContent = "Listo";
         renderDashboard();
 
       } catch (e) {
-        alert("Error de conexión con el backend");
-        statusEl.textContent = "Error Backend";
+        document.getElementById('matchStatus').textContent = "Error";
       }
     }
 
@@ -179,91 +157,76 @@
     }
 
     function renderDashboard() {
-      const topDiv = document.getElementById('topPicks');
       const listDiv = document.getElementById('playersList');
-      topDiv.innerHTML = '';
       listDiv.innerHTML = '';
-
-      if (currentPlayers.length === 0) {
-        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">Alineaciones no disponibles aún para este partido.</p>';
-        return;
-      }
-
-      const topEV = [...currentPlayers].sort((a,b) => b.maxEV - a.maxEV);
-
-      topEV.slice(0, 3).forEach(p => {
-        topDiv.innerHTML += `
-          <div class="bg-emerald-950/50 border border-emerald-500/40 rounded-lg p-3 flex justify-between items-center">
-            <div>
-              <div class="flex items-center gap-2">
-                <p class="font-bold text-sm text-white">${p.name} <span class="text-xs text-slate-400">(${p.pos})</span></p>
-                <span class="text-[9px] bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded font-bold">+EV ${p.maxEV.toFixed(1)}%</span>
-              </div>
-              <p class="text-[10px] text-emerald-400">${p.teamName} — <b>${p.suggestedMarket}</b></p>
-              <p class="text-[10px] text-slate-300">Apostar en: <b class="text-amber-400">${p.bestBookie} (Cuota ${p.bestOdd})</b></p>
-            </div>
-            <div class="text-right">
-              <span class="text-[10px] text-slate-400">Prob. Real</span>
-              <p class="text-base font-bold text-emerald-400">${(p.probSOT05 * 100).toFixed(1)}%</p>
-            </div>
-          </div>
-        `;
-      });
 
       const filtered = currentPlayers.filter(p => currentFilter === 'ALL' ? true : p.team === currentFilter);
 
+      if (filtered.length === 0) {
+        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">No hay alineaciones confirmadas para este equipo.</p>';
+        return;
+      }
+
       filtered.forEach(p => {
         listDiv.innerHTML += `
-          <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 space-y-3">
-            <div class="flex justify-between items-start border-b border-slate-700 pb-2">
+          <div class="bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-3 shadow-lg">
+            <div class="flex justify-between items-start border-b border-slate-800 pb-2">
               <div>
                 <h3 class="font-bold text-sm text-white">${p.name} <span class="text-xs text-slate-400">(${p.pos})</span></h3>
-                <p class="text-[10px] text-slate-400">${p.teamName}</p>
+                <p class="text-[10px] text-emerald-400 font-semibold">${p.teamName}</p>
               </div>
               <div class="text-right">
-                <span class="text-[10px] text-slate-400 block">Sugerencia:</span>
-                <span class="text-xs font-bold text-amber-400">${p.suggestedMarket}</span>
+                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded font-bold border border-emerald-500/20">
+                  +EV ${p.maxEV.toFixed(1)}%
+                </span>
               </div>
             </div>
 
+            <!-- Análisis Escrito del Jugador -->
+            <p class="text-[11px] text-slate-300 leading-snug bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
+              💡 <b>Análisis de Selección:</b> ${p.writtenAnalysis}
+            </p>
+
+            <!-- Grilla de Métricas Ampliadas -->
             <div class="grid grid-cols-3 gap-2 text-center text-xs">
-              <div class="bg-slate-900/60 p-2 rounded">
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <p class="text-[9px] text-slate-400">Prom. Disparos</p>
+                <p class="font-bold text-slate-200">${p.avgShots}</p>
+              </div>
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                 <p class="text-[9px] text-slate-400">Rem. Puerta (+0.5)</p>
-                <p class="font-bold ${p.probSOT05 >= 0.60 ? 'text-emerald-400' : 'text-slate-200'}">${(p.probSOT05 * 100).toFixed(1)}%</p>
+                <p class="font-bold text-emerald-400">${(p.probSOT05 * 100).toFixed(0)}%</p>
               </div>
-              <div class="bg-slate-900/60 p-2 rounded">
-                <p class="text-[9px] text-slate-400">Rem. Puerta (+1.5)</p>
-                <p class="font-bold ${p.probSOT15 >= 0.40 ? 'text-emerald-400' : 'text-slate-200'}">${(p.probSOT15 * 100).toFixed(1)}%</p>
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <p class="text-[9px] text-slate-400">Marca / Asiste</p>
+                <p class="font-bold text-indigo-400">${(p.probGoalOrAst * 100).toFixed(0)}%</p>
               </div>
-              <div class="bg-slate-900/60 p-2 rounded">
-                <p class="text-[9px] text-slate-400">Anota Gol</p>
-                <p class="font-bold text-slate-200">${(p.probGoal * 100).toFixed(1)}%</p>
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <p class="text-[9px] text-slate-400">Prom. Faltas</p>
+                <p class="font-bold text-slate-200">${p.avgFouls}</p>
               </div>
-              <div class="bg-slate-900/60 p-2 rounded">
-                <p class="text-[9px] text-slate-400">Asistencia</p>
-                <p class="font-bold text-slate-200">${(p.probAst * 100).toFixed(1)}%</p>
-              </div>
-              <div class="bg-slate-900/60 p-2 rounded">
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
                 <p class="text-[9px] text-slate-400">Faltas (+1.5)</p>
-                <p class="font-bold text-slate-200">${(p.probFouls15 * 100).toFixed(1)}%</p>
+                <p class="font-bold text-amber-400">${(p.probFouls15 * 100).toFixed(0)}%</p>
               </div>
-              <div class="bg-slate-900/60 p-2 rounded">
-                <p class="text-[9px] text-slate-400">Tarjeta</p>
-                <p class="font-bold text-amber-400">${(p.probCard * 100).toFixed(1)}%</p>
+              <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                <p class="text-[9px] text-slate-400">Recibe Tarjeta</p>
+                <p class="font-bold text-rose-400">${(p.probCard * 100).toFixed(0)}%</p>
               </div>
             </div>
 
-            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
+            <!-- Comparativa de Cuotas -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
               <div>
-                <span class="text-[10px] text-slate-400 block">Mejor Opción de Apuesta:</span>
-                <span class="font-bold text-white text-xs">${p.suggestedMarket}</span>
+                <span class="text-[9px] text-slate-400 block">Mercado Seleccionado:</span>
+                <span class="font-bold text-amber-400">${p.suggestedMarket}</span>
               </div>
-              <div class="flex gap-2 text-right">
-                <div class="px-2 py-1 bg-slate-800 rounded border border-blue-500/30">
+              <div class="flex gap-2">
+                <div class="px-2.5 py-1 bg-slate-900 rounded-lg border border-blue-500/30 text-center">
                   <p class="text-[9px] text-blue-400 font-bold">Betplay</p>
                   <p class="font-bold text-white text-xs">${p.betplayOdd}</p>
                 </div>
-                <div class="px-2 py-1 bg-slate-800 rounded border border-orange-500/30">
+                <div class="px-2.5 py-1 bg-slate-900 rounded-lg border border-orange-500/30 text-center">
                   <p class="text-[9px] text-orange-400 font-bold">Rushbet</p>
                   <p class="font-bold text-white text-xs">${p.rushbetOdd}</p>
                 </div>
