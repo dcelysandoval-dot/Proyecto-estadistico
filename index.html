@@ -11,13 +11,13 @@
   <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-20 shadow-lg">
     <div class="max-w-xl mx-auto flex justify-between items-center">
       <h1 class="text-xl font-bold text-emerald-400">⚽ StatsValue + Odds Pro</h1>
-      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">Betplay / Rushbet EV</span>
+      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">Análisis + Betplay & Rushbet</span>
     </div>
   </header>
 
   <main class="max-w-xl mx-auto p-4 space-y-6">
 
-    <!-- Sección Configuración -->
+    <!-- Configuración e Inserción de API Key -->
     <section class="bg-slate-800 rounded-xl p-4 border border-slate-700 space-y-3">
       <div class="flex justify-between items-center">
         <label class="text-xs font-bold text-slate-300">Seleccionar Partido:</label>
@@ -36,21 +36,21 @@
       </div>
     </section>
 
-    <!-- Top Valor Esperado (+EV) -->
+    <!-- Top Valor Esperado / Apuestas Clave -->
     <section class="space-y-3">
       <h2 class="text-base font-bold text-emerald-400 flex items-center gap-2">
-        <span>🚀</span> RECOMENDACIONES (+EV / VALOR POSITIVO)
+        <span>🚀</span> TOP Sugerencias de Apuesta (+EV)
       </h2>
       <div id="topPicks" class="space-y-2">
-        <p class="text-xs text-slate-500 italic">Selecciona un partido para analizar valor frente a Betplay y Rushbet...</p>
+        <p class="text-xs text-slate-500 italic">Sincroniza un partido para ver las mejores sugerencias...</p>
       </div>
     </section>
 
-    <!-- Jugadores y Simulación de Cuotas -->
+    <!-- Plantilla Completa de Jugadores con Métricas + Comparador -->
     <section class="space-y-3">
       <div class="flex justify-between items-center">
         <h2 class="text-base font-bold text-white flex items-center gap-2">
-          <span>📊</span> Comparativa de Cuotas y Filtro
+          <span>👥</span> Análisis de Jugadores y Cuotas
         </h2>
         <div class="flex gap-1 text-xs">
           <button onclick="filterTeam('ALL')" class="px-2 py-1 bg-slate-700 rounded font-medium text-slate-300">Todos</button>
@@ -193,22 +193,47 @@
             const name = playerObj.name || 'Jugador';
             const playerFactor = getStringHashFactor(name);
 
+            // Medias base por posición real (F=Delantero, M=Medio, D=Defensa, G=Portero)
             let baseSOT = pos === 'F' ? 1.45 : pos === 'M' ? 0.85 : pos === 'D' ? 0.35 : 0.01;
             let baseGoal = pos === 'F' ? 0.42 : pos === 'M' ? 0.18 : pos === 'D' ? 0.08 : 0.001;
+            let baseAst = pos === 'F' ? 0.22 : pos === 'M' ? 0.28 : pos === 'D' ? 0.10 : 0.01;
+            let baseFouls = pos === 'F' ? 1.1 : pos === 'M' ? 1.4 : pos === 'D' ? 1.6 : 0.2;
+            let baseCards = pos === 'F' ? 0.12 : pos === 'M' ? 0.18 : pos === 'D' ? 0.25 : 0.05;
 
             const lambdaSOT = baseSOT * playerFactor;
             const lambdaGoal = baseGoal * playerFactor;
+            const lambdaAst = baseAst * playerFactor;
+            const lambdaFouls = baseFouls * playerFactor;
+            const lambdaCards = baseCards * playerFactor;
 
             const probSOT05 = probAtLeast(1, lambdaSOT);
+            const probSOT15 = probAtLeast(2, lambdaSOT);
             const probGoal = probAtLeast(1, lambdaGoal);
+            const probAst = probAtLeast(1, lambdaAst);
+            const probFouls15 = probAtLeast(2, lambdaFouls);
+            const probCard = probAtLeast(1, lambdaCards);
 
-            // Generación de Cuotas Simuladas Betplay vs Rushbet basadas en margen de casas
-            const betplayOddSOT = parseFloat((1 / probSOT05 * 1.08).toFixed(2));
-            const rushbetOddSOT = parseFloat((1 / probSOT05 * 1.05).toFixed(2));
+            // Selección del mercado con mayor potencial según rol
+            let marketLabel = "+0.5 Remate Puerta";
+            let chosenProb = probSOT05;
+            if (pos === 'F' && probSOT15 >= 0.40) {
+              marketLabel = "+1.5 Remates Puerta";
+              chosenProb = probSOT15;
+            } else if (pos === 'D' && probFouls15 >= 0.45) {
+              marketLabel = "+1.5 Faltas Cometidas";
+              chosenProb = probFouls15;
+            }
 
-            // EV % = (Prob * Cuota) - 1
-            const evBetplay = ((probSOT05 * betplayOddSOT) - 1) * 100;
-            const evRushbet = ((probSOT05 * rushbetOddSOT) - 1) * 100;
+            // Simulación de cuotas comparativas Betplay vs Rushbet
+            const betplayOdd = parseFloat((1 / chosenProb * 1.08).toFixed(2));
+            const rushbetOdd = parseFloat((1 / chosenProb * 1.05).toFixed(2));
+
+            const evBetplay = ((chosenProb * betplayOdd) - 1) * 100;
+            const evRushbet = ((chosenProb * rushbetOdd) - 1) * 100;
+
+            const bestBookie = betplayOdd >= rushbetOdd ? 'Betplay' : 'Rushbet';
+            const bestOdd = Math.max(betplayOdd, rushbetOdd);
+            const maxEV = Math.max(evBetplay, evRushbet);
 
             currentPlayers.push({
               name: name,
@@ -216,13 +241,17 @@
               team: isHome ? 'HOME' : 'AWAY',
               teamName: teamData.team.name,
               probSOT05: probSOT05,
+              probSOT15: probSOT15,
               probGoal: probGoal,
-              betplayOddSOT: betplayOddSOT,
-              rushbetOddSOT: rushbetOddSOT,
-              evBetplay: evBetplay,
-              evRushbet: evRushbet,
-              bestBookie: betplayOddSOT >= rushbetOddSOT ? 'Betplay' : 'Rushbet',
-              bestOdd: Math.max(betplayOddSOT, rushbetOddSOT)
+              probAst: probAst,
+              probFouls15: probFouls15,
+              probCard: probCard,
+              suggestedMarket: marketLabel,
+              betplayOdd: betplayOdd,
+              rushbetOdd: rushbetOdd,
+              bestBookie: bestBookie,
+              bestOdd: bestOdd,
+              maxEV: maxEV
             });
           });
         });
@@ -247,23 +276,22 @@
         return;
       }
 
-      // Ordenar por mejor Valor Esperado (EV)
-      const topEV = [...currentPlayers].sort((a,b) => Math.max(b.evBetplay, b.evRushbet) - Math.max(a.evBetplay, a.evRushbet));
+      // Ordenar por Valor Esperado (+EV)
+      const topEV = [...currentPlayers].sort((a,b) => b.maxEV - a.maxEV);
 
       topEV.slice(0, 3).forEach(p => {
-        const bestEV = Math.max(p.evBetplay, p.evRushbet).toFixed(1);
         topDiv.innerHTML += `
           <div class="bg-emerald-950/50 border border-emerald-500/40 rounded-lg p-3 flex justify-between items-center">
             <div>
               <div class="flex items-center gap-2">
-                <p class="font-bold text-sm text-white">${p.name}</p>
-                <span class="text-[9px] bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded font-bold">+EV ${bestEV}%</span>
+                <p class="font-bold text-sm text-white">${p.name} <span class="text-xs text-slate-400">(${p.pos})</span></p>
+                <span class="text-[9px] bg-emerald-500 text-slate-950 px-1.5 py-0.5 rounded font-bold">+EV ${p.maxEV.toFixed(1)}%</span>
               </div>
-              <p class="text-[10px] text-emerald-400">${p.teamName} — +0.5 Remate a Puerta</p>
-              <p class="text-[10px] text-slate-300">Mejor Cuota: <b class="text-amber-400">${p.bestBookie} (${p.bestOdd})</b></p>
+              <p class="text-[10px] text-emerald-400">${p.teamName} — <b>${p.suggestedMarket}</b></p>
+              <p class="text-[10px] text-slate-300">Apostar en: <b class="text-amber-400">${p.bestBookie} (Cuota ${p.bestOdd})</b></p>
             </div>
             <div class="text-right">
-              <span class="text-xs text-slate-400">Prob. Real</span>
+              <span class="text-[10px] text-slate-400">Prob. Real</span>
               <p class="text-base font-bold text-emerald-400">${(p.probSOT05 * 100).toFixed(1)}%</p>
             </div>
           </div>
@@ -280,29 +308,58 @@
                 <h3 class="font-bold text-sm text-white">${p.name} <span class="text-xs text-slate-400">(${p.pos})</span></h3>
                 <p class="text-[10px] text-slate-400">${p.teamName}</p>
               </div>
-              <span class="text-xs px-2 py-1 rounded font-bold ${p.probSOT05 >= 0.60 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-400'}">
-                ${(p.probSOT05 * 100).toFixed(1)}% Prob.
-              </span>
-            </div>
-
-            <!-- Comparador de Cuotas Betplay vs Rushbet -->
-            <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-              <div class="bg-slate-900/80 p-2.5 rounded border border-slate-700">
-                <div class="flex justify-between items-center mb-1">
-                  <span class="font-bold text-blue-400 text-[11px]">Betplay</span>
-                  <span class="text-[10px] ${p.evBetplay > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500'}">EV: ${p.evBetplay.toFixed(1)}%</span>
-                </div>
-                <p class="text-sm font-extrabold text-white">Cuota: ${p.betplayOddSOT}</p>
-              </div>
-
-              <div class="bg-slate-900/80 p-2.5 rounded border border-slate-700">
-                <div class="flex justify-between items-center mb-1">
-                  <span class="font-bold text-orange-400 text-[11px]">Rushbet</span>
-                  <span class="text-[10px] ${p.evRushbet > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500'}">EV: ${p.evRushbet.toFixed(1)}%</span>
-                </div>
-                <p class="text-sm font-extrabold text-white">Cuota: ${p.rushbetOddSOT}</p>
+              <div class="text-right">
+                <span class="text-[10px] text-slate-400 block">Sugerencia:</span>
+                <span class="text-xs font-bold text-amber-400">${p.suggestedMarket}</span>
               </div>
             </div>
+
+            <!-- Todas las métricas estadísticas anteriores -->
+            <div class="grid grid-cols-3 gap-2 text-center text-xs">
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Rem. Puerta (+0.5)</p>
+                <p class="font-bold ${p.probSOT05 >= 0.60 ? 'text-emerald-400' : 'text-slate-200'}">${(p.probSOT05 * 100).toFixed(1)}%</p>
+              </div>
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Rem. Puerta (+1.5)</p>
+                <p class="font-bold ${p.probSOT15 >= 0.40 ? 'text-emerald-400' : 'text-slate-200'}">${(p.probSOT15 * 100).toFixed(1)}%</p>
+              </div>
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Anota Gol</p>
+                <p class="font-bold text-slate-200">${(p.probGoal * 100).toFixed(1)}%</p>
+              </div>
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Asistencia</p>
+                <p class="font-bold text-slate-200">${(p.probAst * 100).toFixed(1)}%</p>
+              </div>
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Faltas (+1.5)</p>
+                <p class="font-bold text-slate-200">${(p.probFouls15 * 100).toFixed(1)}%</p>
+              </div>
+              <div class="bg-slate-900/60 p-2 rounded">
+                <p class="text-[9px] text-slate-400">Tarjeta</p>
+                <p class="font-bold text-amber-400">${(p.probCard * 100).toFixed(1)}%</p>
+              </div>
+            </div>
+
+            <!-- Módulo de Cuotas Comparativas Betplay vs Rushbet -->
+            <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Mejor Opción de Apuesta:</span>
+                <span class="font-bold text-white text-xs">${p.suggestedMarket}</span>
+              </div>
+              <div class="flex gap-2 text-right">
+                <div class="px-2 py-1 bg-slate-800 rounded border border-blue-500/30">
+                  <p class="text-[9px] text-blue-400 font-bold">Betplay</p>
+                  <p class="font-bold text-white text-xs">${p.betplayOdd}</p>
+                </div>
+                <div class="px-2 py-1 bg-slate-800 rounded border border-orange-500/30">
+                  <p class="text-[9px] text-orange-400 font-bold">Rushbet</p>
+                  <p class="font-bold text-white text-xs">${p.rushbetOdd}</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         `;
       });
@@ -310,5 +367,4 @@
   </script>
 </body>
 </html>
-
 
