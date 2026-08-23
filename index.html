@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StatsValue V2 — Pro Analytics & Combined Bets</title>
+  <title>StatsValue V2 — Analytics & Parlays Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-12">
@@ -19,16 +19,20 @@
 
   <main class="max-w-2xl mx-auto p-4 space-y-6">
 
-    <!-- Selector de Partidos -->
+    <!-- Selector de Partido y Botón de Recarga -->
     <section class="bg-slate-900 rounded-2xl p-4 border border-slate-800 space-y-3 shadow-lg">
       <div class="flex justify-between items-center">
-        <label class="text-xs font-bold text-slate-300">Partido en Lista:</label>
+        <label class="text-xs font-bold text-slate-300">Seleccionar Partido:</label>
         <span id="matchStatus" class="text-[11px] text-emerald-400 font-bold">Cargando...</span>
       </div>
 
       <select id="matchSelect" onchange="analyzeSelectedFixture()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500">
         <option value="">Cargando partidos de hoy...</option>
       </select>
+
+      <button onclick="fetchLiveMatches()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 py-2.5 rounded-xl text-xs font-extrabold transition-all">
+        🔄 Cargar / Actualizar Partidos Hoy
+      </button>
     </section>
 
     <!-- Análisis Táctico y Necesidades del Partido -->
@@ -77,15 +81,22 @@
 
     async function fetchLiveMatches() {
       const statusEl = document.getElementById('matchStatus');
+      statusEl.textContent = "Cargando...";
+
       try {
+        // Cálculo de la fecha en zona horaria local (evita desfase UTC)
         const now = new Date();
-        const today = now.toISOString().split('T')[0];
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
 
         const res = await fetch(`${BACKEND_URL}/matches?date=${today}`);
         const data = await res.json();
 
         if (data.error) {
           statusEl.textContent = "Error servidor";
+          alert("Respuesta del backend: " + (typeof data.error === 'object' ? JSON.stringify(data.error) : data.error));
           return;
         }
 
@@ -94,8 +105,8 @@
         select.innerHTML = '';
 
         if (matches.length === 0) {
-          select.innerHTML = '<option value="">Sin partidos hoy</option>';
-          statusEl.textContent = "Sin datos";
+          select.innerHTML = '<option value="">No hay partidos programados hoy</option>';
+          statusEl.textContent = "Sin partidos";
           return;
         }
 
@@ -110,7 +121,7 @@
         analyzeSelectedFixture();
 
       } catch (e) {
-        statusEl.textContent = "Error de conexión";
+        statusEl.textContent = "Error Conexión";
       }
     }
 
@@ -132,7 +143,7 @@
           document.getElementById('tacticalText').textContent = data.tacticalAnalysis;
         }
 
-        // Mostrar Combinada
+        // Mostrar Apuesta Combinada
         if (data.combinedBet) {
           document.getElementById('combinedSection').classList.remove('hidden');
           document.getElementById('combinedOddBadge').textContent = `Cuota: ${data.combinedBet.combinedOdd}`;
@@ -141,6 +152,8 @@
             <p>• <b>Leg 2:</b> ${data.combinedBet.leg2}</p>
             <p class="text-[10px] text-amber-400 mt-1"><b>Gestión de Riesgo:</b> Usar ${data.combinedBet.recommendedStake}</p>
           `;
+        } else {
+          document.getElementById('combinedSection').classList.add('hidden');
         }
 
         document.getElementById('matchStatus').textContent = "Listo";
@@ -163,7 +176,7 @@
       const filtered = currentPlayers.filter(p => currentFilter === 'ALL' ? true : p.team === currentFilter);
 
       if (filtered.length === 0) {
-        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">No hay alineaciones confirmadas para este equipo.</p>';
+        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">Alineaciones no confirmadas o sin jugadores en este filtro.</p>';
         return;
       }
 
