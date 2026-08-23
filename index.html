@@ -62,7 +62,6 @@
   </main>
 
   <script>
-    // URL Base de tu Backend en Render
     const BACKEND_URL = "https://stats-backend-jpd3.onrender.com";
     const PRIORITY_LEAGUE_IDS = [2, 3, 39, 140, 135, 78, 61, 239, 13, 11, 71, 128];
 
@@ -70,7 +69,6 @@
     let currentPlayers = [];
     let currentFilter = 'ALL';
 
-    // Cargar partidos automáticamente al abrir la página
     document.addEventListener("DOMContentLoaded", () => {
       fetchLiveMatches();
     });
@@ -80,14 +78,19 @@
       statusEl.textContent = "Cargando...";
 
       try {
-        const today = new Date().toISOString().split('T')[0];
-        
-        // Petición al backend que utiliza la API Key segura de Render
+        // Cálculo preciso de la fecha local (evita desfases por UTC)
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+
         const res = await fetch(`${BACKEND_URL}/matches?date=${today}`);
         const data = await res.json();
 
         if (data.error) {
           statusEl.textContent = "Error servidor";
+          alert("Error desde el servidor: " + data.error);
           return;
         }
 
@@ -144,7 +147,6 @@
       }
     }
 
-    // Consulta las métricas al backend sin enviar ninguna clave
     async function analyzeSelectedFixture() {
       const fixtureId = document.getElementById('matchSelect').value;
       const statusEl = document.getElementById('matchStatus');
@@ -166,7 +168,7 @@
         renderDashboard();
 
       } catch (e) {
-        alert("Error de conexión con el backend de Render");
+        alert("Error de conexión con el backend");
         statusEl.textContent = "Error Backend";
       }
     }
