@@ -11,7 +11,7 @@
   <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-20 shadow-lg">
     <div class="max-w-xl mx-auto flex justify-between items-center">
       <h1 class="text-xl font-bold text-emerald-400">⚽ StatsValue Auto Pro</h1>
-      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">API En Vivo</span>
+      <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded-full font-medium border border-emerald-500/20">Ligas Top + LATAM</span>
     </div>
   </header>
 
@@ -19,12 +19,12 @@
 
     <section class="bg-slate-800 rounded-xl p-4 border border-slate-700 space-y-3">
       <div class="flex justify-between items-center">
-        <label class="text-xs font-bold text-slate-300">Partido Seleccionado:</label>
+        <label class="text-xs font-bold text-slate-300">Seleccionar Partido Prioritario:</label>
         <span id="matchStatus" class="text-[10px] text-emerald-400 font-semibold">Listo</span>
       </div>
 
-      <select id="matchSelect" onchange="analyzeSelectedFixture()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-emerald-500">
-        <option value="">Carga tu API Key para ver partidos de hoy...</option>
+      <select id="matchSelect" onchange="analyzeSelectedFixture()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+        <option value="">Sincroniza la API para cargar partidos...</option>
       </select>
 
       <div class="pt-2 border-t border-slate-700 flex gap-2">
@@ -40,7 +40,7 @@
         <span>🔥</span> TOP Oportunidades del Partido (>60% Prob)
       </h2>
       <div id="topPicks" class="space-y-2">
-        <p class="text-xs text-slate-500 italic">Sincroniza la API para ver oportunidades automáticas...</p>
+        <p class="text-xs text-slate-500 italic">Sincroniza para analizar el partido seleccionado...</p>
       </div>
     </section>
 
@@ -62,6 +62,22 @@
   </main>
 
   <script>
+    // IDs de Ligas Prioritarias en API-Football (Europa + COL, ARG, BRA, Libertadores, Sudamericana)
+    const PRIORITY_LEAGUE_IDS = [
+      2,   // UEFA Champions League
+      3,   // UEFA Europa League
+      39,  // Premier League (Inglaterra)
+      140, // La Liga (España)
+      135, // Serie A (Italia)
+      78,  // Bundesliga (Alemania)
+      61,  // Ligue 1 (Francia)
+      239, // Liga BetPlay (Colombia)
+      13,  // Copa Libertadores
+      11,  // Copa Sudamericana
+      71,  // Brasileirão Serie A (Brasil)
+      128  // Liga Profesional (Argentina)
+    ];
+
     let rawLiveFixtures = [];
     let currentPlayers = [];
     let currentFilter = 'ALL';
@@ -112,14 +128,44 @@
           return;
         }
 
-        rawLiveFixtures.slice(0, 30).forEach(item => {
-          const opt = document.createElement('option');
-          opt.value = item.fixture.id;
-          opt.textContent = `${item.teams.home.name} vs ${item.teams.away.name} (${item.fixture.status.short})`;
-          select.appendChild(opt);
+        // Separar y priorizar partidos
+        const priorityMatches = [];
+        const otherMatches = [];
+
+        rawLiveFixtures.forEach(item => {
+          if (PRIORITY_LEAGUE_IDS.includes(item.league.id)) {
+            priorityMatches.push(item);
+          } else {
+            otherMatches.push(item);
+          }
         });
 
-        statusEl.textContent = `${rawLiveFixtures.length} Partidos Cargados`;
+        // Poblar el selector colocando primero las ligas priorizadas
+        if (priorityMatches.length > 0) {
+          const optGroupTop = document.createElement('optgroup');
+          optGroupTop.label = "⭐ LIGAS TOP Y SUDAMÉRICA";
+          priorityMatches.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.fixture.id;
+            opt.textContent = `[${item.league.name}] ${item.teams.home.name} vs ${item.teams.away.name} (${item.fixture.status.short})`;
+            optGroupTop.appendChild(opt);
+          });
+          select.appendChild(optGroupTop);
+        }
+
+        if (otherMatches.length > 0) {
+          const optGroupOther = document.createElement('optgroup');
+          optGroupOther.label = "🌐 Otras Ligas";
+          otherMatches.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.fixture.id;
+            opt.textContent = `[${item.league.name}] ${item.teams.home.name} vs ${item.teams.away.name} (${item.fixture.status.short})`;
+            optGroupOther.appendChild(opt);
+          });
+          select.appendChild(optGroupOther);
+        }
+
+        statusEl.textContent = `${priorityMatches.length} Top / ${rawLiveFixtures.length} Total`;
         analyzeSelectedFixture();
 
       } catch (e) {
@@ -148,7 +194,6 @@
 
           startX1.forEach(p => {
             const playerObj = p.player;
-            // Estimación matemática base para demostración de métricas en vivo
             const sot90 = 1.2;
             const factor = 85 / 90;
 
@@ -162,8 +207,7 @@
               probGoal: probAtLeast(1, 0.35 * factor),
               probAst: probAtLeast(1, 0.20 * factor),
               probFouls15: probAtLeast(2, 1.2 * factor),
-              probCard: probAtLeast(1, 0.15 * factor),
-              evSOT15: (probAtLeast(2, sot90 * factor) * 1.80) - 1
+              probCard: probAtLeast(1, 0.15 * factor)
             });
           });
         });
@@ -184,7 +228,7 @@
       listDiv.innerHTML = '';
 
       if (currentPlayers.length === 0) {
-        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">Alineaciones no disponibles aún para este partido.</p>';
+        listDiv.innerHTML = '<p class="text-xs text-slate-500 italic">Alineaciones aún no confirmadas para este partido.</p>';
         return;
       }
 
@@ -248,6 +292,7 @@
   </script>
 </body>
 </html>
+
 
 
   
