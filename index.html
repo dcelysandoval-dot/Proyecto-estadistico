@@ -65,31 +65,13 @@
   </main>
 
   <script>
+    // URL Base de tu Backend en Render
+    const BACKEND_URL = "https://stats-backend-jpd3.onrender.com";
     const PRIORITY_LEAGUE_IDS = [2, 3, 39, 140, 135, 78, 61, 239, 13, 11, 71, 128];
 
     let rawLiveFixtures = [];
     let currentPlayers = [];
     let currentFilter = 'ALL';
-
-    function poisson(k, lambda) {
-      return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
-    }
-    function factorial(n) {
-      return (n <= 1) ? 1 : n * factorial(n - 1);
-    }
-    function probAtLeast(k, lambda) {
-      let sum = 0;
-      for (let i = 0; i < k; i++) sum += poisson(i, lambda);
-      return 1 - sum;
-    }
-
-    function getStringHashFactor(str) {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      return 0.8 + (Math.abs(hash % 40) / 100);
-    }
 
     async function fetchLiveMatches() {
       const apiKey = document.getElementById('apiKey').value.trim();
@@ -164,100 +146,37 @@
         analyzeSelectedFixture();
 
       } catch (e) {
-        alert("Error de conexión");
+        alert("Error de conexión con API-Sports");
         statusEl.textContent = "Error de Red";
       }
     }
 
+    // Consulta las métricas procesadas directamente al Backend en Render
     async function analyzeSelectedFixture() {
       const fixtureId = document.getElementById('matchSelect').value;
       const apiKey = document.getElementById('apiKey').value.trim();
+      const statusEl = document.getElementById('matchStatus');
+
       if (!fixtureId || !apiKey) return;
 
-      const res = await fetch(`https://v3.football.api-sports.io/fixtures/lineups?fixture=${fixtureId}`, {
-        method: "GET",
-        headers: { "x-apisports-key": apiKey }
-      });
-      const data = await res.json();
+      statusEl.textContent = "Calculando...";
 
-      currentPlayers = [];
+      try {
+        const response = await fetch(`${BACKEND_URL}/analyze-fixture?fixture=${fixtureId}&api_key=${apiKey}`);
+        
+        if (!response.ok) {
+          throw new Error("Error en la petición a Render");
+        }
 
-      if (data.response && data.response.length > 0) {
-        data.response.forEach((teamData, teamIndex) => {
-          const isHome = teamIndex === 0;
-          const startX1 = teamData.startXI || [];
+        const data = await response.json();
+        currentPlayers = data.players || [];
+        statusEl.textContent = "Listo";
+        renderDashboard();
 
-          startX1.forEach(p => {
-            const playerObj = p.player;
-            const pos = playerObj.pos || 'M';
-            const name = playerObj.name || 'Jugador';
-            const playerFactor = getStringHashFactor(name);
-
-            // Medias base por posición real (F=Delantero, M=Medio, D=Defensa, G=Portero)
-            let baseSOT = pos === 'F' ? 1.45 : pos === 'M' ? 0.85 : pos === 'D' ? 0.35 : 0.01;
-            let baseGoal = pos === 'F' ? 0.42 : pos === 'M' ? 0.18 : pos === 'D' ? 0.08 : 0.001;
-            let baseAst = pos === 'F' ? 0.22 : pos === 'M' ? 0.28 : pos === 'D' ? 0.10 : 0.01;
-            let baseFouls = pos === 'F' ? 1.1 : pos === 'M' ? 1.4 : pos === 'D' ? 1.6 : 0.2;
-            let baseCards = pos === 'F' ? 0.12 : pos === 'M' ? 0.18 : pos === 'D' ? 0.25 : 0.05;
-
-            const lambdaSOT = baseSOT * playerFactor;
-            const lambdaGoal = baseGoal * playerFactor;
-            const lambdaAst = baseAst * playerFactor;
-            const lambdaFouls = baseFouls * playerFactor;
-            const lambdaCards = baseCards * playerFactor;
-
-            const probSOT05 = probAtLeast(1, lambdaSOT);
-            const probSOT15 = probAtLeast(2, lambdaSOT);
-            const probGoal = probAtLeast(1, lambdaGoal);
-            const probAst = probAtLeast(1, lambdaAst);
-            const probFouls15 = probAtLeast(2, lambdaFouls);
-            const probCard = probAtLeast(1, lambdaCards);
-
-            // Selección del mercado con mayor potencial según rol
-            let marketLabel = "+0.5 Remate Puerta";
-            let chosenProb = probSOT05;
-            if (pos === 'F' && probSOT15 >= 0.40) {
-              marketLabel = "+1.5 Remates Puerta";
-              chosenProb = probSOT15;
-            } else if (pos === 'D' && probFouls15 >= 0.45) {
-              marketLabel = "+1.5 Faltas Cometidas";
-              chosenProb = probFouls15;
-            }
-
-            // Simulación de cuotas comparativas Betplay vs Rushbet
-            const betplayOdd = parseFloat((1 / chosenProb * 1.08).toFixed(2));
-            const rushbetOdd = parseFloat((1 / chosenProb * 1.05).toFixed(2));
-
-            const evBetplay = ((chosenProb * betplayOdd) - 1) * 100;
-            const evRushbet = ((chosenProb * rushbetOdd) - 1) * 100;
-
-            const bestBookie = betplayOdd >= rushbetOdd ? 'Betplay' : 'Rushbet';
-            const bestOdd = Math.max(betplayOdd, rushbetOdd);
-            const maxEV = Math.max(evBetplay, evRushbet);
-
-            currentPlayers.push({
-              name: name,
-              pos: pos,
-              team: isHome ? 'HOME' : 'AWAY',
-              teamName: teamData.team.name,
-              probSOT05: probSOT05,
-              probSOT15: probSOT15,
-              probGoal: probGoal,
-              probAst: probAst,
-              probFouls15: probFouls15,
-              probCard: probCard,
-              suggestedMarket: marketLabel,
-              betplayOdd: betplayOdd,
-              rushbetOdd: rushbetOdd,
-              bestBookie: bestBookie,
-              bestOdd: bestOdd,
-              maxEV: maxEV
-            });
-          });
-        });
+      } catch (e) {
+        alert("Error de conexión con el backend de Render");
+        statusEl.textContent = "Error Backend";
       }
-
-      renderDashboard();
     }
 
     function filterTeam(f) {
@@ -276,7 +195,6 @@
         return;
       }
 
-      // Ordenar por Valor Esperado (+EV)
       const topEV = [...currentPlayers].sort((a,b) => b.maxEV - a.maxEV);
 
       topEV.slice(0, 3).forEach(p => {
@@ -314,7 +232,6 @@
               </div>
             </div>
 
-            <!-- Todas las métricas estadísticas anteriores -->
             <div class="grid grid-cols-3 gap-2 text-center text-xs">
               <div class="bg-slate-900/60 p-2 rounded">
                 <p class="text-[9px] text-slate-400">Rem. Puerta (+0.5)</p>
@@ -342,7 +259,6 @@
               </div>
             </div>
 
-            <!-- Módulo de Cuotas Comparativas Betplay vs Rushbet -->
             <div class="bg-slate-900/80 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
               <div>
                 <span class="text-[10px] text-slate-400 block">Mejor Opción de Apuesta:</span>
@@ -367,4 +283,5 @@
   </script>
 </body>
 </html>
+
 
