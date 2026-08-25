@@ -834,290 +834,332 @@
        JAVASCRIPT
   ========================== -->
 
-  <script>
+ <script>
+const API_PARTIDOS = "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
+const API_MARKET = "https://stats-backend-jpd3.onrender.com/api/player-market";
 
+async function cargarAnalytics() {
+    const contenedor = document.getElementById("lista-partidos");
 
-    const API_URL =
-      "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
+    try {
 
+        // ==========================================
+        // 1. OBTENER PARTIDOS
+        // ==========================================
 
-    async function cargarAnalytics() {
+        const respuestaPartidos = await fetch(API_PARTIDOS);
 
-
-      const contenedor =
-        document.getElementById(
-          "lista-partidos"
-        );
-
-
-      try {
-
-
-        const respuesta =
-          await fetch(API_URL);
-
-
-        if (!respuesta.ok) {
-
-          throw new Error(
-            "Error del servidor"
-          );
-
+        if (!respuestaPartidos.ok) {
+            throw new Error("Error consultando partidos");
         }
 
-
-        const datos =
-          await respuesta.json();
-
-
-        const partidos =
-          datos.matches || [];
+        const datosPartidos = await respuestaPartidos.json();
+        const partidos = datosPartidos.matches || [];
 
 
-        document.getElementById(
-          "total-partidos"
-        ).textContent =
-          partidos.length;
+        // ==========================================
+        // 2. OBTENER PLAYER MARKET SCANNER
+        // ==========================================
 
+        const respuestaMarket = await fetch(API_MARKET);
 
-        if (
-          partidos.length === 0
-        ) {
-
-          contenedor.innerHTML = `
-
-            <div class="loading">
-
-              ⚽ No hay partidos
-              disponibles actualmente.
-
-            </div>
-
-          `;
-
-          return;
-
+        if (!respuestaMarket.ok) {
+            throw new Error("Error consultando Player Market");
         }
 
+        const market = await respuestaMarket.json();
+
+
+        // ==========================================
+        // 3. EXTRAER DATOS DEL SCANNER
+        // ==========================================
+
+        const jugador =
+            market.jugador ||
+            market.player ||
+            "Jugador pendiente";
+
+        const mercado =
+            market.mercado ||
+            market.market ||
+            "Remates";
+
+        const linea =
+            market.linea ??
+            market.line ??
+            "—";
+
+        const rating =
+            market.fa_rating ??
+            market.rating ??
+            "—";
+
+        const probabilidad =
+            market.probabilidad_fa ??
+            market.probability_fa ??
+            "—";
+
+        const cuota =
+            market.cuota ??
+            market.odds ??
+            "—";
+
+        const valueEdge =
+            market.value_edge ??
+            market.valueEdge ??
+            "—";
+
+        const señal =
+            market.señal ||
+            market.signal ||
+            "ANALIZANDO";
+
+        const motor =
+            market.motor ||
+            "Fútbol Analytics";
+
+
+        // ==========================================
+        // 4. ACTUALIZAR PLAYER MARKET SCANNER
+        // ==========================================
+
+        actualizarScanner({
+            jugador,
+            mercado,
+            linea,
+            rating,
+            probabilidad,
+            cuota,
+            valueEdge,
+            señal,
+            motor
+        });
+
+
+        // ==========================================
+        // 5. MOSTRAR PARTIDOS
+        // ==========================================
+
+        if (!partidos.length) {
+
+            contenedor.innerHTML =
+                "<p class='mensaje-estado'>No hay partidos programados para el día de hoy.</p>";
+
+            return;
+        }
 
         contenedor.innerHTML = "";
 
 
-        partidos.forEach(
-          partido => {
+        partidos.forEach(p => {
+
+            const displayScore =
+                (p.estado === "TIMED" ||
+                 p.estado === "SCHEDULED")
+                ? "VS"
+                : `${p.goles_local} - ${p.goles_visitante}`;
 
 
-            const competencia =
-              partido
-                .competition
-                ?.name
-                || "Competición";
+            const tarjeta = document.createElement("div");
 
-
-            const estado =
-              partido.status
-                || "PROGRAMADO";
-
-
-            const local =
-              partido
-                .homeTeam
-                ?.name
-                || "Local";
-
-
-            const visitante =
-              partido
-                .awayTeam
-                ?.name
-                || "Visitante";
-
-
-            const score =
-              partido.score;
-
-
-            let marcador =
-              "VS";
-
-
-            if (
-              score &&
-              score.home !== null &&
-              score.away !== null
-            ) {
-
-              marcador =
-                `${score.home} - ${score.away}`;
-
-            }
-
-
-            const ivj =
-              partido.ivjIndex
-              || 0;
-
-
-            const tarjeta =
-              document.createElement(
-                "div"
-              );
-
-
-            tarjeta.className =
-              "card-partido";
+            tarjeta.className = "card-partido";
 
 
             tarjeta.innerHTML = `
 
+                <div class="card-header">
 
-              <div class="card-header">
+                    <span>
+                        ${p.competicion || "Competición"}
+                    </span>
 
-                <span class="competicion">
-
-                  ${competencia}
-
-                </span>
-
-
-                <span class="estado">
-
-                  ${estado}
-
-                </span>
-
-              </div>
-
-
-              <div class="equipos">
-
-
-                <div
-                  class="equipo local"
-                >
-
-                  ${local}
+                    <span>
+                        ${p.estado || "SCHEDULED"}
+                    </span>
 
                 </div>
 
 
-                <div class="vs">
+                <div class="marcador-container">
 
-                  ${marcador}
-
-                </div>
-
-
-                <div
-                  class="equipo visitante"
-                >
-
-                  ${visitante}
-
-                </div>
+                    <span class="equipo local">
+                        ${p.local || "Local"}
+                    </span>
 
 
-              </div>
+                    <span class="resultado">
+                        ${displayScore}
+                    </span>
 
 
-              <div class="ivj-panel">
-
-
-                <div class="ivj-header">
-
-
-                  <span
-                    class="ivj-title"
-                  >
-
-                    Índice IVJ
-
-                  </span>
-
-
-                  <span
-                    class="ivj-score"
-                  >
-
-                    ${ivj}
-
-                  </span>
-
+                    <span class="equipo visitante">
+                        ${p.visitante || "Visitante"}
+                    </span>
 
                 </div>
 
 
-                <div
-                  class="ivj-description"
-                >
+                <div class="scanner-panel">
 
-                  Motor estadístico
-                  inicial de Fútbol
-                  Analytics.
+                    <div class="scanner-title">
+                        PLAYER MARKET SCANNER
+                    </div>
 
-                  <br><br>
 
-                  Próximamente:
+                    <div class="scanner-body">
 
-                  Player Market Scanner,
-                  FA Rating, Value Edge,
-                  probabilidades y
-                  stake recomendado.
+                        <div class="player-info">
+
+                            🎯
+
+                            <strong>
+                                ${jugador}
+                            </strong>
+
+                            |
+
+                            ${mercado}
+
+                        </div>
+
+
+                        <span
+                            class="ivj-badge"
+                            style="background-color:#38bdf8"
+                        >
+
+                            FA ${rating}/100
+
+                        </span>
+
+                    </div>
+
+
+                    <div style="
+                        margin-top:8px;
+                        color:#94a3b8;
+                        font-size:0.8em;
+                    ">
+
+                        Línea: ${linea}
+                        &nbsp; | &nbsp;
+                        Probabilidad FA: ${probabilidad}
+                        &nbsp; | &nbsp;
+                        Cuota: ${cuota}
+                        &nbsp; | &nbsp;
+                        Value Edge: ${valueEdge}
+
+                    </div>
 
                 </div>
-
-
-              </div>
 
             `;
 
 
-            contenedor.appendChild(
-              tarjeta
-            );
+            contenedor.appendChild(tarjeta);
+
+        });
 
 
-          }
-        );
-
-
-      } catch (error) {
-
+    } catch (error) {
 
         console.error(
-          "Error:",
-          error
+            "Fútbol Analytics:",
+            error
         );
 
 
         contenedor.innerHTML = `
 
-          <div class="error">
+            <p class="mensaje-estado">
 
-            ❌ No fue posible
-            conectar con Fútbol Analytics.
+                Error al conectar con el motor
+                de Fútbol Analytics.
 
-            <br><br>
-
-            Comprueba que el backend
-            esté disponible.
-
-          </div>
+            </p>
 
         `;
 
-      }
-
     }
+}
 
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      cargarAnalytics
+// ==================================================
+// ACTUALIZAR SCANNER V1.2
+// ==================================================
+
+function actualizarScanner(data) {
+
+    // Buscamos elementos por ID.
+    // Si existen en tu dashboard, se actualizan
+    // automáticamente.
+
+    const jugador =
+        document.getElementById("scanner-jugador");
+
+    const mercado =
+        document.getElementById("scanner-mercado");
+
+    const linea =
+        document.getElementById("scanner-linea");
+
+    const rating =
+        document.getElementById("scanner-rating");
+
+    const probabilidad =
+        document.getElementById("scanner-probabilidad");
+
+    const cuota =
+        document.getElementById("scanner-cuota");
+
+    const valueEdge =
+        document.getElementById("scanner-value-edge");
+
+    const señal =
+        document.getElementById("scanner-senal");
+
+
+    if (jugador)
+        jugador.textContent = data.jugador;
+
+    if (mercado)
+        mercado.textContent = data.mercado;
+
+    if (linea)
+        linea.textContent = data.linea;
+
+    if (rating)
+        rating.textContent = data.rating;
+
+    if (probabilidad)
+        probabilidad.textContent = data.probabilidad;
+
+    if (cuota)
+        cuota.textContent = data.cuota;
+
+    if (valueEdge)
+        valueEdge.textContent = data.valueEdge;
+
+    if (señal)
+        señal.textContent = data.señal;
+
+
+    console.log(
+        "PLAYER MARKET SCANNER V1.2",
+        data
     );
+}
 
 
-  </script>
+// ==================================================
+// INICIAR APLICACIÓN
+// ==================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    cargarAnalytics
+);
+</script>
 
 
 </body>
