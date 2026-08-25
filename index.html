@@ -3,149 +3,203 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fútbol Analytics - Partidos de Hoy</title>
+  <title>Fútbol Analytics - Player Market Scanner</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #0f172a;
-      color: #f8fafc;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: #0b132b;
+      color: #ffffff;
       margin: 0;
-      padding: 20 px;
+      padding: 20px;
     }
 
-    h1 {
+    .header-app {
       text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-app h1 {
       color: #38bdf8;
+      margin: 0;
+      font-size: 1.8em;
+      letter-spacing: 1px;
+    }
+
+    .header-app p {
+      color: #94a3b8;
+      font-size: 0.9em;
+      margin-top: 5px;
     }
 
     .contenedor-partidos {
-      display: grid;
-      grid-template-columns: repeat (auto-fit, minmax (300 px, 1fr));
-      gap: 16 px;
-      max-width: 1000 px;
-      margin: 20 px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 750px;
+      margin: 0 auto;
     }
 
-    .tarjeta-partido {
-      background-color: #1e293b;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-      border: 1px solid #334155;
+    .card-partido {
+      background: #1c2541;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid #3a506b;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
-    .liga-titulo {
-      font-size: 0.85em;
-      color: #94a3b8;
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8em;
+      color: #6fffe9;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
     }
 
     .marcador-container {
-      display: flex;
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
       align-items: center;
+      gap: 15px;
       margin: 12px 0;
-      font-size: 1.1em;
-      font-weight: bold;
     }
 
     .equipo {
-      flex: 1;
+      font-size: 1.1em;
+      font-weight: 600;
     }
 
-    .equipo.visitante {
-      text-align: right;
-    }
+    .equipo.local { text-align: right; }
+    .equipo.visitante { text-align: left; }
 
     .resultado {
-      background-color: #0f172a;
-      padding: 6px 12px;
-      border-radius: 4px;
+      background-color: #0b132b;
+      padding: 6px 14px;
+      border-radius: 8px;
       color: #38bdf8;
-      margin: 0 10px;
+      font-weight: bold;
+      font-size: 1.1em;
+      border: 1px solid #3a506b;
     }
 
-    .estado-tag {
-      display: inline-block;
+    /* Panel del Escáner de Mercado IVJ */
+    .scanner-panel {
+      background: #0b132b;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 14px;
+      border-left: 4px solid #38bdf8;
+    }
+
+    .scanner-title {
       font-size: 0.75em;
-      padding: 4px 8px;
-      border-radius: 4px;
-      background-color: #334155;
-      color: #cbd5e1;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
     }
 
-    .cargando {
+    .scanner-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player-info {
+      font-size: 0.95em;
+    }
+
+    .player-info strong {
+      color: #38bdf8;
+    }
+
+    .ivj-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.8em;
+      color: #000000;
+    }
+
+    .mensaje-estado {
       text-align: center;
       color: #94a3b8;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Fútbol Analytics - En Vivo</h1>
+  <div class="header-app">
+    <h1>FÚTBOL ANALYTICS</h1>
+    <p>Player Market Scanner • Índice IVJ</p>
+  </div>
+
   <div id="lista-partidos" class="contenedor-partidos">
-    <p class="cargando">Cargando partidos...</p>
+    <p class="mensaje-estado">Cargando datos y proyecciones estadísticas...</p>
   </div>
 
   <script>
-    // URL de tu API desplegada en Render
     const API_URL = "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
 
-    async function obtenerPartidos() {
+    async function cargarAnalytics() {
       const contenedor = document.getElementById("lista-partidos");
 
       try {
         const respuesta = await fetch(API_URL);
-
-        if (!respuesta.ok) {
-          throw new Error(`Error en la solicitud: ${respuesta.status}`);
-        }
+        if (!respuesta.ok) throw new Error("Error consultando el backend");
 
         const datos = await respuesta.json();
         const partidos = datos.matches;
 
         if (!partidos || partidos.length === 0) {
-          contenedor.innerHTML = "<p class='cargando'>No hay partidos programados para el día de hoy.</p>";
+          contenedor.innerHTML = "<p class='mensaje-estado'>No hay partidos programados para el día de hoy.</p>";
           return;
         }
 
         contenedor.innerHTML = "";
 
-        partidos.forEach(partido => {
-          const equipoLocal = partido.homeTeam.name;
-          const equipoVisitante = partido.awayTeam.name;
-          const competicion = partido.competition.name;
-          const estado = partido.status;
-
-          // Extraer goles con respaldo si aún no se ha jugado
-          const golesLocal = partido.score.fullTime.home ?? "-";
-          const golesVisitante = partido.score.fullTime.away ?? "-";
+        partidos.forEach(p => {
+          const ivj = p.analisis.ivj;
+          const displayScore = (p.estado === "TIMED" || p.estado === "SCHEDULED") 
+            ? "VS" 
+            : `${p.goles_local} - ${p.goles_visitante}`;
 
           const tarjeta = document.createElement("div");
-          tarjeta.className = "tarjeta-partido";
+          tarjeta.className = "card-partido";
           tarjeta.innerHTML = `
-            <div class="liga-titulo">${competicion}</div>
-            <div class="marcador-container">
-              <span class="equipo local">${equipoLocal}</span>
-              <span class="resultado">${golesLocal} - ${golesVisitante}</span>
-              <span class="equipo visitante">${equipoVisitante}</span>
+            <div class="card-header">
+              <span>${p.competicion}</span>
+              <span>${p.estado}</span>
             </div>
-            <span class="estado-tag">Estado: ${estado}</span>
+            <div class="marcador-container">
+              <span class="equipo local">${p.local}</span>
+              <span class="resultado">${displayScore}</span>
+              <span class="equipo visitante">${p.visitante}</span>
+            </div>
+            <div class="scanner-panel" style="border-left-color: ${ivj.color}">
+              <div class="scanner-title">Mercado Analizado (IVJ)</div>
+              <div class="scanner-body">
+                <div class="player-info">
+                  🎯 <strong>${ivj.pick}</strong> | Rating FA: <strong>${ivj.rating}/100</strong>
+                </div>
+                <span class="ivj-badge" style="background-color: ${ivj.color}">
+                  VALOR ${ivj.confianza}
+                </span>
+              </div>
+            </div>
           `;
-
           contenedor.appendChild(tarjeta);
         });
 
       } catch (error) {
-        console.error("Error consultando el backend:", error);
-        contenedor.innerHTML = "<p class='cargando'>Error al cargar la información de partidos.</p>";
+        console.error(error);
+        contenedor.innerHTML = "<p class='mensaje-estado'>Error al conectar con el servidor analítico.</p>";
       }
     }
 
-    // Cargar datos automáticamente al abrir la página
-    document.addEventListener("DOMContentLoaded", obtenerPartidos);
+    document.addEventListener("DOMContentLoaded", cargarAnalytics);
   </script>
 </body>
 </html>
