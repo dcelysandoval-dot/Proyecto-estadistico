@@ -1136,12 +1136,17 @@ function actualizarScanner(data) {
 
     if (cuota)
         cuota.textContent = data.cuota;
+if (valueEdge) {
+    const ve = data.value_edge ?? data.valueEdge;
+    valueEdge.textContent = ve !== undefined && ve !== null
+        ? Number(ve).toFixed(2)
+        : "-";
+}
 
-   if (valueEdge)
-    valueEdge.textContent = data.valueEdge ?? data.value_edge ?? "-";
-
-    if (señal)
-    señal.textContent = data.señal ?? data.signal ?? "ANALIZANDO";
+if (señal) {
+    const signal = data["señal"] ?? data.signal;
+    señal.textContent = signal || "ANALIZANDO";
+}
 
 
     console.log(
