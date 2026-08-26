@@ -923,17 +923,17 @@ async function cargarAnalytics() {
         // 4. ACTUALIZAR PLAYER MARKET SCANNER
         // ==========================================
 
-        actualizarScanner({
-            jugador,
-            mercado,
-            linea,
-            rating,
-            probabilidad,
-            cuota,
-            valueEdge,
-            señal,
-            motor
-        });
+      actualizarScanner({
+    jugador,
+    mercado,
+    linea,
+    rating,
+    probabilidad,
+    cuota,
+    valueEdge: market.value_edge,
+    señal: market.señal,
+    motor
+});
 
 
         // ==========================================
