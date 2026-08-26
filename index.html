@@ -1143,18 +1143,16 @@ if (valueEdge) {
         : "-";
 }
 
-if (señal) {
-    const signal = data["señal"] ?? data.signal;
-    señal.textContent = signal || "ANALIZANDO";
-}
+if (señal)
+    señal.textContent = data.señal ?? data.signal ?? "ANALIZANDO";
 
+console.log("DEBUG VALUE EDGE:", data.valueEdge, data.value_edge);
+console.log("DEBUG SEÑAL:", data.señal, data.signal);
 
-    console.log(
-        "PLAYER MARKET SCANNER V1.2",
-        data
-    );
-}
-
+console.log(
+    "PLAYER MARKET SCANNER V1.2",
+    data
+);
 
 // ==================================================
 // INICIAR APLICACIÓN
