@@ -3,469 +3,791 @@
 
 <head>
 
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-  <title>Fútbol Analytics</title>
+    <title>Fútbol Analytics</title>
 
-  <style>
 
-    * {
-      box-sizing: border-box;
-    }
+    <style>
 
-    body {
+        * {
+            box-sizing: border-box;
+        }
 
-      margin: 0;
 
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+        body {
 
-      background:
-        linear-gradient(
-          135deg,
-          #07111f,
-          #0b132b,
-          #101c35
-        );
+            margin: 0;
 
-      color: white;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
 
-      min-height: 100vh;
+            background:
+                linear-gradient(
+                    135deg,
+                    #07111f,
+                    #0b132b,
+                    #101c35
+                );
 
-      padding: 20px;
-    }
+            color: white;
 
+            min-height: 100vh;
 
-    /* =========================
-       HEADER
-    ========================= */
+            padding: 20px;
+        }
 
-    .header {
 
-      max-width: 1100px;
+        /* =========================
+           HEADER
+        ========================= */
 
-      margin: 0 auto 25px;
+        .header {
 
-      text-align: center;
-    }
+            max-width: 1100px;
 
-    .header h1 {
+            margin: 0 auto 25px;
 
-      margin: 0;
+            text-align: center;
+        }
 
-      font-size: 2.2rem;
 
-      color: #38bdf8;
+        .header h1 {
 
-      letter-spacing: 2px;
-    }
+            margin: 0;
 
-    .header p {
+            font-size: 2.2rem;
 
-      margin-top: 8px;
+            color: #38bdf8;
 
-      color: #94a3b8;
+            letter-spacing: 2px;
+        }
 
-      font-size: 0.95rem;
-    }
 
+        .header p {
 
-    /* =========================
-       DASHBOARD
-    ========================= */
+            margin-top: 8px;
 
-    .dashboard {
+            color: #94a3b8;
 
-      max-width: 1100px;
+            font-size: 0.95rem;
+        }
 
-      margin: 0 auto 25px;
 
-      display: grid;
+        /* =========================
+           DASHBOARD
+        ========================= */
 
-      grid-template-columns:
-        repeat(4, 1fr);
+        .dashboard {
 
-      gap: 15px;
-    }
+            max-width: 1100px;
 
+            margin: 0 auto 25px;
 
-    .stat-card {
+            display: grid;
 
-      background: #121e35;
+            grid-template-columns:
+                repeat(4, 1fr);
 
-      border: 1px solid #263957;
+            gap: 15px;
+        }
 
-      border-radius: 14px;
 
-      padding: 18px;
+        .stat-card {
 
-      text-align: center;
+            background: #121e35;
 
-      box-shadow:
-        0 8px 25px
-        rgba(0,0,0,0.25);
-    }
+            border: 1px solid #263957;
 
+            border-radius: 14px;
 
-    .stat-title {
+            padding: 18px;
 
-      color: #94a3b8;
+            text-align: center;
 
-      font-size: 0.75rem;
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,0.25);
+        }
 
-      text-transform: uppercase;
 
-      letter-spacing: 1px;
-    }
+        .stat-title {
 
+            color: #94a3b8;
 
-    .stat-value {
+            font-size: 0.75rem;
 
-      margin-top: 8px;
+            text-transform: uppercase;
 
-      font-size: 1.5rem;
+            letter-spacing: 1px;
+        }
 
-      font-weight: bold;
 
-      color: #38bdf8;
-    }
+        .stat-value {
 
+            margin-top: 8px;
 
-    /* =========================
-       CONTENEDOR
-    ========================= */
+            font-size: 1.5rem;
 
-    .contenedor {
+            font-weight: bold;
 
-      max-width: 1100px;
+            color: #38bdf8;
+        }
 
-      margin: auto;
-    }
 
+        /* =========================
+           CONTENEDOR
+        ========================= */
 
-    .section-title {
+        .contenedor {
 
-      font-size: 1.2rem;
+            max-width: 1100px;
 
-      margin-bottom: 15px;
+            margin: auto;
+        }
 
-      color: #6fffe9;
-    }
 
+        .section-title {
 
-    /* =========================
-       PARTIDO
-    ========================= */
+            font-size: 1.2rem;
 
-    .card-partido {
+            margin-bottom: 15px;
 
-      background: #121e35;
+            color: #6fffe9;
+        }
 
-      border:
 
-        1px solid
-        #263957;
+        /* =========================
+           PARTIDO
+        ========================= */
 
-      border-radius: 16px;
+        .card-partido {
 
-      padding: 20px;
+            background: #121e35;
 
-      margin-bottom: 18px;
+            border:
+                1px solid
+                #263957;
 
-      box-shadow:
+            border-radius: 16px;
 
-        0 10px 30px
-        rgba(0,0,0,0.25);
-    }
+            padding: 20px;
 
+            margin-bottom: 18px;
 
-    .card-header {
+            box-shadow:
+                0 10px 30px
+                rgba(0,0,0,0.25);
+        }
 
-      display: flex;
 
-      justify-content:
-        space-between;
+        .card-header {
 
-      align-items: center;
+            display: flex;
 
-      margin-bottom: 18px;
+            justify-content:
+                space-between;
 
-      color: #94a3b8;
+            align-items: center;
 
-      font-size: 0.8rem;
+            margin-bottom: 18px;
 
-      text-transform:
-        uppercase;
+            color: #94a3b8;
 
-      letter-spacing: 1px;
-    }
+            font-size: 0.8rem;
 
+            text-transform:
+                uppercase;
 
-    .competicion {
+            letter-spacing: 1px;
+        }
 
-      color: #6fffe9;
 
-      font-weight: bold;
-    }
+        .competicion {
 
+            color: #6fffe9;
 
-    .estado {
+            font-weight: bold;
+        }
 
-      padding: 5px 9px;
 
-      border-radius: 7px;
+        .estado {
 
-      background: #1e293b;
+            padding: 5px 9px;
 
-      color: #38bdf8;
-    }
+            border-radius: 7px;
 
+            background: #1e293b;
 
-    /* =========================
-       EQUIPOS
-    ========================= */
+            color: #38bdf8;
+        }
 
-    .equipos {
 
-      display: grid;
+        /* =========================
+           EQUIPOS
+        ========================= */
 
-      grid-template-columns:
-        1fr
-        auto
-        1fr;
+        .marcador-container {
 
-      align-items: center;
+            display: grid;
 
-      gap: 20px;
-    }
+            grid-template-columns:
+                1fr
+                auto
+                1fr;
 
+            align-items: center;
 
-    .equipo {
+            gap: 20px;
+        }
 
-      font-size: 1.15rem;
 
-      font-weight: bold;
-    }
+        .equipo {
 
+            font-size: 1.15rem;
 
-    .local {
+            font-weight: bold;
+        }
 
-      text-align: right;
-    }
 
+        .local {
 
-    .visitante {
+            text-align: right;
+        }
 
-      text-align: left;
-    }
 
+        .visitante {
 
-    .vs {
+            text-align: left;
+        }
 
-      background: #07111f;
 
-      border: 1px solid #334155;
+        .resultado {
 
-      padding: 9px 14px;
+            background: #07111f;
 
-      border-radius: 10px;
+            border: 1px solid #334155;
 
-      color: #38bdf8;
+            padding: 9px 14px;
 
-      font-weight: bold;
-    }
+            border-radius: 10px;
 
+            color: #38bdf8;
 
-    /* =========================
-       IVJ
-    ========================= */
+            font-weight: bold;
 
-    .ivj-panel {
+            white-space: nowrap;
+        }
 
-      margin-top: 20px;
 
-      padding: 15px;
+        /* =========================
+           PLAYER MARKET
+        ========================= */
 
-      background: #07111f;
+        .scanner-panel {
 
-      border-radius: 12px;
+            margin-top: 20px;
 
-      border-left:
+            padding: 18px;
 
-        4px solid
-        #38bdf8;
-    }
+            background:
+                linear-gradient(
+                    145deg,
+                    #0d1733,
+                    #111f45
+                );
 
+            border:
+                1px solid
+                rgba(56,189,248,.25);
 
-    .ivj-header {
+            border-radius: 14px;
+        }
 
-      display: flex;
 
-      justify-content:
-        space-between;
+        .scanner-title {
 
-      align-items: center;
+            color: #38bdf8;
 
-      margin-bottom: 12px;
-    }
+            font-size: 0.9rem;
 
+            font-weight: 800;
 
-    .ivj-title {
+            letter-spacing: 1px;
 
-      color: #94a3b8;
+            margin-bottom: 12px;
+        }
 
-      font-size: 0.75rem;
 
-      text-transform:
-        uppercase;
+        .scanner-body {
 
-      letter-spacing: 1px;
-    }
+            display: flex;
 
+            justify-content:
+                space-between;
 
-    .ivj-score {
+            align-items: center;
 
-      font-size: 1.4rem;
+            gap: 15px;
 
-      font-weight: bold;
+            flex-wrap: wrap;
+        }
 
-      color: #38bdf8;
-    }
 
+        .player-info {
 
-    .ivj-description {
+            color: #ffffff;
 
-      color: #cbd5e1;
+            font-size: 1rem;
+        }
 
-      font-size: 0.9rem;
 
-      line-height: 1.5;
-    }
+        .ivj-badge {
 
+            display: inline-block;
 
-    /* =========================
-       INFO
-    ========================= */
+            padding: 6px 10px;
 
-    .info {
+            border-radius: 8px;
 
-      margin-top: 20px;
+            color: #07111f;
 
-      padding: 15px;
+            font-weight: 800;
+        }
 
-      background: #101c35;
 
-      border-radius: 12px;
+        .scanner-data {
 
-      color: #94a3b8;
+            margin-top: 10px;
 
-      font-size: 0.85rem;
+            color: #94a3b8;
 
-      text-align: center;
-    }
+            font-size: 0.8rem;
 
+            line-height: 1.6;
+        }
 
-    /* =========================
-       LOADING
-    ========================= */
 
-    .loading {
+        /* =========================
+           PLAYER MARKET SCANNER V1.2
+        ========================= */
 
-      text-align: center;
+        #player-market-scanner {
 
-      padding: 50px;
+            max-width: 1100px;
 
-      color: #94a3b8;
-    }
+            margin: 25px auto;
 
+            padding: 22px;
 
-    .error {
+            background:
+                linear-gradient(
+                    145deg,
+                    #111c3d,
+                    #17275a
+                );
 
-      background: #35151b;
+            border:
+                1px solid
+                rgba(56,189,248,.45);
 
-      border: 1px solid #7f1d1d;
+            border-radius: 18px;
 
-      color: #fca5a5;
+            box-shadow:
+                0 8px 30px
+                rgba(0,0,0,.25);
+        }
 
-      padding: 20px;
 
-      border-radius: 12px;
+        .scanner-main-title {
 
-      text-align: center;
-    }
+            text-align: center;
 
+            margin-bottom: 20px;
+        }
 
-    /* =========================
-       RESPONSIVE
-    ========================= */
 
-    @media (max-width: 800px) {
+        .scanner-main-title .title {
 
-      .dashboard {
+            color: #38bdf8;
 
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
+            font-size: 1.35rem;
 
-    }
+            font-weight: 800;
 
+            letter-spacing: 1px;
+        }
 
-    @media (max-width: 600px) {
 
-      body {
+        .scanner-main-title .subtitle {
 
-        padding: 12px;
-      }
+            color: #94a3b8;
 
+            font-size: .85rem;
 
-      .header h1 {
+            margin-top: 5px;
+        }
 
-        font-size: 1.7rem;
-      }
 
+        .scanner-top-grid {
 
-      .dashboard {
+            display: grid;
 
-        grid-template-columns:
-          1fr 1fr;
+            grid-template-columns:
+                1.4fr
+                1fr
+                1fr;
 
-        gap: 10px;
-      }
+            gap: 12px;
 
+            margin-bottom: 15px;
+        }
 
-      .stat-card {
 
-        padding: 14px 8px;
-      }
+        .scanner-box {
 
+            background: #0b132b;
 
-      .stat-value {
+            padding: 15px;
 
-        font-size: 1.2rem;
-      }
+            border-radius: 12px;
+        }
 
 
-      .equipos {
+        .scanner-label {
 
-        gap: 10px;
-      }
+            color: #94a3b8;
 
+            font-size: .75rem;
+        }
 
-      .equipo {
 
-        font-size: 0.9rem;
-      }
+        .scanner-value-text {
 
-    }
+            color: #ffffff;
 
-  </style>
+            font-size: 1.15rem;
+
+            font-weight: 700;
+
+            margin-top: 5px;
+        }
+
+
+        .scanner-market-text {
+
+            color: #6fffe9;
+
+            font-size: 1.05rem;
+
+            font-weight: 700;
+
+            margin-top: 5px;
+        }
+
+
+        .scanner-metrics {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4,1fr);
+
+            gap: 12px;
+        }
+
+
+        .scanner-metric {
+
+            background: #0b132b;
+
+            padding: 16px;
+
+            border-radius: 12px;
+
+            text-align: center;
+        }
+
+
+        .scanner-metric-title {
+
+            color: #94a3b8;
+
+            font-size: .72rem;
+        }
+
+
+        .scanner-metric-value {
+
+            color: #38bdf8;
+
+            font-size: 1.7rem;
+
+            font-weight: 800;
+
+            margin-top: 4px;
+        }
+
+
+        .scanner-metric-value.probabilidad {
+
+            color: #6fffe9;
+        }
+
+
+        .scanner-metric-value.cuota {
+
+            color: #ffffff;
+        }
+
+
+        .scanner-metric-value.value-edge {
+
+            color: #22c55e;
+        }
+
+
+        .scanner-unit {
+
+            color: #64748b;
+
+            font-size: .7rem;
+        }
+
+
+        .scanner-signal {
+
+            margin-top: 15px;
+
+            padding: 16px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #063b35,
+                    #092d38
+                );
+
+            border:
+                1px solid
+                rgba(34,197,94,.4);
+
+            border-radius: 12px;
+
+            text-align: center;
+        }
+
+
+        .scanner-signal-title {
+
+            color: #94a3b8;
+
+            font-size: .72rem;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+
+        .scanner-signal-value {
+
+            color: #22c55e;
+
+            font-size: 1.3rem;
+
+            font-weight: 800;
+
+            margin-top: 5px;
+        }
+
+
+        .scanner-disclaimer {
+
+            margin-top: 12px;
+
+            text-align: center;
+
+            color: #64748b;
+
+            font-size: .72rem;
+        }
+
+
+        /* =========================
+           INFO
+        ========================= */
+
+        .info {
+
+            margin-top: 20px;
+
+            padding: 15px;
+
+            background: #101c35;
+
+            border-radius: 12px;
+
+            color: #94a3b8;
+
+            font-size: 0.85rem;
+
+            text-align: center;
+        }
+
+
+        /* =========================
+           LOADING
+        ========================= */
+
+        .loading {
+
+            text-align: center;
+
+            padding: 50px;
+
+            color: #94a3b8;
+        }
+
+
+        .error {
+
+            background: #35151b;
+
+            border: 1px solid #7f1d1d;
+
+            color: #fca5a5;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            text-align: center;
+        }
+
+
+        .mensaje-estado {
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #94a3b8;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .dashboard {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .scanner-metrics {
+
+                grid-template-columns:
+                    repeat(2,1fr);
+            }
+
+
+            .scanner-top-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            body {
+
+                padding: 12px;
+            }
+
+
+            .header h1 {
+
+                font-size: 1.7rem;
+            }
+
+
+            .dashboard {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 10px;
+            }
+
+
+            .stat-card {
+
+                padding: 14px 8px;
+            }
+
+
+            .stat-value {
+
+                font-size: 1.2rem;
+            }
+
+
+            .marcador-container {
+
+                gap: 10px;
+            }
+
+
+            .equipo {
+
+                font-size: 0.9rem;
+            }
+
+
+            .resultado {
+
+                padding: 7px 10px;
+
+                font-size: .8rem;
+            }
+
+
+            .scanner-metrics {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 8px;
+            }
+
+
+            .scanner-metric {
+
+                padding: 12px 6px;
+            }
+
+
+            .scanner-metric-value {
+
+                font-size: 1.35rem;
+            }
+        }
+
+    </style>
 
 </head>
 
@@ -473,696 +795,1194 @@
 <body>
 
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-  <div class="header">
+    <div class="header">
 
-    <h1>⚽ FÚTBOL ANALYTICS</h1>
+        <h1>⚽ FÚTBOL ANALYTICS</h1>
 
-    <p>
-      Player Market Scanner
-      • Motor Estadístico V1.1
-    </p>
-
-  </div>
-
-
-  <!-- =========================
-       DASHBOARD
-  ========================== -->
-
-  <div class="dashboard">
-
-    <div class="stat-card">
-
-      <div class="stat-title">
-        Partidos
-      </div>
-
-      <div
-        id="total-partidos"
-        class="stat-value"
-      >
-        —
-      </div>
+        <p>
+            Player Market Scanner
+            • Motor Estadístico V1.2
+        </p>
 
     </div>
 
 
-    <div class="stat-card">
+    <!-- =========================
+         DASHBOARD
+    ========================== -->
 
-      <div class="stat-title">
-        Bankroll
-      </div>
-
-      <div
-        id="bankroll"
-        class="stat-value"
-      >
-        $0
-      </div>
-
-    </div>
+    <div class="dashboard">
 
 
-    <div class="stat-card">
+        <div class="stat-card">
 
-      <div class="stat-title">
-        Stake recomendado
-      </div>
+            <div class="stat-title">
+                Partidos
+            </div>
 
-      <div
-        id="stake"
-        class="stat-value"
-      >
-        2%
-      </div>
+            <div
+                id="total-partidos"
+                class="stat-value"
+            >
+                —
+            </div>
 
-    </div>
-
-
-    <div class="stat-card">
-
-      <div class="stat-title">
-        Motor FA
-      </div>
-
-      <div
-        class="stat-value"
-      >
-        V1.1
-      </div>
-
-    </div>
-
-  </div>
-<!-- =====================================================
-     PLAYER MARKET SCANNER V1.2
-===================================================== -->
-
-<section id="player-market-scanner" style="
-  max-width: 1100px;
-  margin: 25px auto;
-  padding: 22px;
-  background: linear-gradient(145deg, #111c3d, #17275a);
-  border: 1px solid rgba(56,189,248,.45);
-  border-radius: 18px;
-  box-shadow: 0 8px 30px rgba(0,0,0,.25);
-">
-
-  <div style="text-align:center; margin-bottom:20px;">
-    <div style="
-      color:#38bdf8;
-      font-size:1.35rem;
-      font-weight:800;
-      letter-spacing:1px;
-    ">
-      🎯 PLAYER MARKET SCANNER
-    </div>
-
-    <div style="
-      color:#94a3b8;
-      font-size:.85rem;
-      margin-top:5px;
-    ">
-      Fútbol Analytics V1.2 • Motor de Valor Estadístico
-    </div>
-  </div>
-
-  <!-- CABECERA DEL PICK -->
-  <div style="
-    display:grid;
-    grid-template-columns:1.4fr 1fr 1fr;
-    gap:12px;
-    margin-bottom:15px;
-  ">
-
-    <div style="
-      background:#0b132b;
-      padding:15px;
-      border-radius:12px;
-    ">
-      <div style="color:#94a3b8;font-size:.75rem;">
-        JUGADOR
-      </div>
-
-      <div style="
-        color:#ffffff;
-        font-size:1.15rem;
-        font-weight:700;
-        margin-top:5px;
-      " id="scanner-jugador">
-        Esperando análisis...
-      </div>
-    </div>
-
-    <div style="
-      background:#0b132b;
-      padding:15px;
-      border-radius:12px;
-    ">
-      <div style="color:#94a3b8;font-size:.75rem;">
-        MERCADO
-      </div>
-
-      <div style="
-        color:#6fffe9;
-        font-size:1.05rem;
-        font-weight:700;
-        margin-top:5px;
-      " id="scanner-mercado">
-        Remates
-      </div>
-    </div>
-
-    <div style="
-      background:#0b132b;
-      padding:15px;
-      border-radius:12px;
-    ">
-      <div style="color:#94a3b8;font-size:.75rem;">
-        LÍNEA
-      </div>
-
-      <div style="
-        color:#ffffff;
-        font-size:1.05rem;
-        font-weight:700;
-        margin-top:5px;
-      " id="scanner-linea">
-        —
-      </div>
-    </div>
-
-  </div>
-
-  <!-- MÉTRICAS -->
-  <div style="
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-  ">
-
-    <div style="
-      background:#0b132b;
-      padding:16px;
-      border-radius:12px;
-      text-align:center;
-    ">
-      <div style="color:#94a3b8;font-size:.72rem;">
-        FA RATING
-      </div>
-
-      <div style="
-        color:#38bdf8;
-        font-size:1.7rem;
-        font-weight:800;
-      " id="scanner-rating">
-        —
-      </div>
-
-      <div style="color:#64748b;font-size:.7rem;">
-        / 100
-      </div>
-    </div>
-
-    <div style="
-      background:#0b132b;
-      padding:16px;
-      border-radius:12px;
-      text-align:center;
-    ">
-      <div style="color:#94a3b8;font-size:.72rem;">
-        PROBABILIDAD FA
-      </div>
-
-      <div style="
-        color:#6fffe9;
-        font-size:1.7rem;
-        font-weight:800;
-      " id="scanner-probabilidad">
-        —
-      </div>
-    </div>
-
-    <div style="
-      background:#0b132b;
-      padding:16px;
-      border-radius:12px;
-      text-align:center;
-    ">
-      <div style="color:#94a3b8;font-size:.72rem;">
-        CUOTA
-      </div>
-
-      <div style="
-        color:#ffffff;
-        font-size:1.7rem;
-        font-weight:800;
-      " id="scanner-cuota">
-        —
-      </div>
-    </div>
-
-    <div style="
-      background:#0b132b;
-      padding:16px;
-      border-radius:12px;
-      text-align:center;
-    ">
-      <div style="color:#94a3b8;font-size:.72rem;">
-        VALUE EDGE
-      </div>
-
-      <div style="
-        color:#22c55e;
-        font-size:1.7rem;
-        font-weight:800;
-      " id="scanner-value">
-        —
-      </div>
-    </div>
-
-  </div>
-
-  <!-- RECOMENDACIÓN -->
-  <div style="
-    margin-top:15px;
-    padding:16px;
-    background:linear-gradient(90deg,#063b35,#092d38);
-    border:1px solid rgba(34,197,94,.4);
-    border-radius:12px;
-    text-align:center;
-  ">
-
-    <div style="
-      color:#94a3b8;
-      font-size:.72rem;
-      text-transform:uppercase;
-      letter-spacing:1px;
-    ">
-      SEÑAL DEL MOTOR FA
-    </div>
-
-    <div style="
-      color:#22c55e;
-      font-size:1.3rem;
-      font-weight:800;
-      margin-top:5px;
-    " id="scanner-senal">
-      ANALIZANDO MERCADO
-    </div>
-
-  </div>
-
-  <div style="
-    margin-top:12px;
-    text-align:center;
-    color:#64748b;
-    font-size:.72rem;
-  ">
-    El FA Rating, la probabilidad y el Value Edge son métricas
-    analíticas. No garantizan resultados.
-  </div>
-
-</section>
-
-<!-- =====================================================
-     FIN PLAYER MARKET SCANNER V1.2
-===================================================== -->
-
-  <!-- =========================
-       PARTIDOS
-  ========================== -->
-
-  <div class="contenedor">
-
-    <div class="section-title">
-      🔎 Partidos disponibles
-    </div>
+        </div>
 
 
-    <div id="lista-partidos">
+        <div class="stat-card">
 
-      <div class="loading">
+            <div class="stat-title">
+                Bankroll
+            </div>
 
-        ⚽ Cargando datos reales...
+            <div
+                id="bankroll"
+                class="stat-value"
+            >
+                $0
+            </div>
 
-      </div>
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Stake recomendado
+            </div>
+
+            <div
+                id="stake"
+                class="stat-value"
+            >
+                2%
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-title">
+                Motor FA
+            </div>
+
+            <div class="stat-value">
+                V1.2
+            </div>
+
+        </div>
 
     </div>
 
 
-    <div class="info">
+    <!-- =====================================================
+         PLAYER MARKET SCANNER V1.2
+    ====================================================== -->
 
-      Los datos mostrados proceden del
-      backend de Fútbol Analytics.
-      <br><br>
-
-      El FA Rating y las métricas de valor
-      son herramientas de análisis y
-      no garantizan resultados.
-
-    </div>
-
-  </div>
+    <section id="player-market-scanner">
 
 
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
+        <div class="scanner-main-title">
 
- <script>
-const API_PARTIDOS = "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
-const API_MARKET = "https://stats-backend-jpd3.onrender.com/api/player-market";
+            <div class="title">
+                🎯 PLAYER MARKET SCANNER
+            </div>
 
-async function cargarAnalytics() {
-    const contenedor = document.getElementById("lista-partidos");
+            <div class="subtitle">
+                Fútbol Analytics V1.2
+                • Motor de Valor Estadístico
+            </div>
 
-    try {
-
-        // ==========================================
-        // 1. OBTENER PARTIDOS
-        // ==========================================
-
-        const respuestaPartidos = await fetch(API_PARTIDOS);
-
-        if (!respuestaPartidos.ok) {
-            throw new Error("Error consultando partidos");
-        }
-
-        const datosPartidos = await respuestaPartidos.json();
-        const partidos = datosPartidos.matches || [];
+        </div>
 
 
-        // ==========================================
-        // 2. OBTENER PLAYER MARKET SCANNER
-        // ==========================================
+        <!-- CABECERA -->
 
-        const respuestaMarket = await fetch(API_MARKET);
-
-        if (!respuestaMarket.ok) {
-            throw new Error("Error consultando Player Market");
-        }
-
-        const market = await respuestaMarket.json();
+        <div class="scanner-top-grid">
 
 
-        // ==========================================
-        // 3. EXTRAER DATOS DEL SCANNER
-        // ==========================================
+            <div class="scanner-box">
 
-        const jugador =
-            market.jugador ||
-            market.player ||
-            "Jugador pendiente";
-
-        const mercado =
-            market.mercado ||
-            market.market ||
-            "Remates";
-
-        const linea =
-            market.linea ??
-            market.line ??
-            "—";
-
-        const rating =
-            market.fa_rating ??
-            market.rating ??
-            "—";
-
-       const probabilidad =
-    market.probabilidad_fa ??
-    market.probabilidad ??
-    "-";
-
-        const cuota =
-            market.cuota ??
-            market.odds ??
-            "—";
-
-        const valueEdge =
-            market.value_edge ??
-            market.valueEdge ??
-            "—";
-
-        const señal =
-            market.señal ||
-            market.signal ||
-            "ANALIZANDO";
-
-        const motor =
-            market.motor ||
-            "Fútbol Analytics";
-
-
-        // ==========================================
-        // 4. ACTUALIZAR PLAYER MARKET SCANNER
-        // ==========================================
-
-      actualizarScanner({
-    jugador,
-    mercado,
-    linea,
-    rating,
-    probabilidad,
-    cuota,
-    valueEdge: market.value_edge,
-    señal: market.señal,
-    motor
-});
-
-
-        // ==========================================
-        // 5. MOSTRAR PARTIDOS
-        // ==========================================
-
-        if (!partidos.length) {
-
-            contenedor.innerHTML =
-                "<p class='mensaje-estado'>No hay partidos programados para el día de hoy.</p>";
-
-            return;
-        }
-
-        contenedor.innerHTML = "";
-
-
-        partidos.forEach(p => {
-
-            const displayScore =
-                (p.estado === "TIMED" ||
-                 p.estado === "SCHEDULED")
-                ? "VS"
-                : `${p.goles_local} - ${p.goles_visitante}`;
-
-
-            const tarjeta = document.createElement("div");
-
-            tarjeta.className = "card-partido";
-
-
-            tarjeta.innerHTML = `
-
-                <div class="card-header">
-
-                    <span>
-                        ${p.competicion || "Competición"}
-                    </span>
-
-                    <span>
-                        ${p.estado || "SCHEDULED"}
-                    </span>
-
+                <div class="scanner-label">
+                    JUGADOR
                 </div>
 
-
-                <div class="marcador-container">
-
-                    <span class="equipo local">
-                        ${p.local || "Local"}
-                    </span>
-
-
-                    <span class="resultado">
-                        ${displayScore}
-                    </span>
-
-
-                    <span class="equipo visitante">
-                        ${p.visitante || "Visitante"}
-                    </span>
-
+                <div
+                    class="scanner-value-text"
+                    id="scanner-jugador"
+                >
+                    Esperando análisis...
                 </div>
 
-
-                <div class="scanner-panel">
-
-                    <div class="scanner-title">
-                        PLAYER MARKET SCANNER
-                    </div>
+            </div>
 
 
-                    <div class="scanner-body">
+            <div class="scanner-box">
 
-                        <div class="player-info">
+                <div class="scanner-label">
+                    MERCADO
+                </div>
 
-                            🎯
+                <div
+                    class="scanner-market-text"
+                    id="scanner-mercado"
+                >
+                    Remates
+                </div>
 
-                            <strong>
-                                ${jugador}
-                            </strong>
+            </div>
 
-                            |
 
-                            ${mercado}
+            <div class="scanner-box">
+
+                <div class="scanner-label">
+                    LÍNEA
+                </div>
+
+                <div
+                    class="scanner-value-text"
+                    id="scanner-linea"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- MÉTRICAS -->
+
+        <div class="scanner-metrics">
+
+
+            <div class="scanner-metric">
+
+                <div class="scanner-label">
+                    FA RATING
+                </div>
+
+                <div
+                    class="scanner-metric-value"
+                    id="scanner-rating"
+                >
+                    —
+                </div>
+
+                <div class="scanner-unit">
+                    / 100
+                </div>
+
+            </div>
+
+
+            <div class="scanner-metric">
+
+                <div class="scanner-label">
+                    PROBABILIDAD FA
+                </div>
+
+                <div
+                    class="scanner-metric-value probabilidad"
+                    id="scanner-probabilidad"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="scanner-metric">
+
+                <div class="scanner-label">
+                    CUOTA
+                </div>
+
+                <div
+                    class="scanner-metric-value cuota"
+                    id="scanner-cuota"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="scanner-metric">
+
+                <div class="scanner-label">
+                    VALUE EDGE
+                </div>
+
+                <div
+                    class="scanner-metric-value value-edge"
+                    id="scanner-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SEÑAL -->
+
+        <div class="scanner-signal">
+
+            <div class="scanner-signal-title">
+                SEÑAL DEL MOTOR FA
+            </div>
+
+            <div
+                class="scanner-signal-value"
+                id="scanner-senal"
+            >
+                ANALIZANDO MERCADO
+            </div>
+
+        </div>
+
+
+        <div class="scanner-disclaimer">
+
+            El FA Rating, la probabilidad y el
+            Value Edge son métricas analíticas.
+            No garantizan resultados.
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PARTIDOS
+    ====================================================== -->
+
+    <div class="contenedor">
+
+
+        <div class="section-title">
+            🔎 Partidos disponibles
+        </div>
+
+
+        <div id="lista-partidos">
+
+            <div class="loading">
+                ⚽ Cargando datos reales...
+            </div>
+
+        </div>
+
+
+        <div class="info">
+
+            Los datos mostrados proceden del
+            backend de Fútbol Analytics.
+
+            <br><br>
+
+            El FA Rating y las métricas de valor
+            son herramientas de análisis y
+            no garantizan resultados.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+
+        // ==================================================
+        // CONFIGURACIÓN API
+        // ==================================================
+
+        const API_PARTIDOS =
+            "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
+
+        const API_MARKET =
+            "https://stats-backend-jpd3.onrender.com/api/player-market";
+
+
+        // ==================================================
+        // CARGAR ANALYTICS
+        // ==================================================
+
+        async function cargarAnalytics() {
+
+            const contenedor =
+                document.getElementById(
+                    "lista-partidos"
+                );
+
+
+            // ==================================================
+            // 1. CARGAR PLAYER MARKET
+            // ==================================================
+
+            try {
+
+                const respuestaMarket =
+                    await fetch(API_MARKET, {
+                        cache: "no-store"
+                    });
+
+
+                if (!respuestaMarket.ok) {
+
+                    throw new Error(
+                        "HTTP " +
+                        respuestaMarket.status +
+                        " en Player Market"
+                    );
+                }
+
+
+                const market =
+                    await respuestaMarket.json();
+
+
+                console.log(
+                    "PLAYER MARKET API:",
+                    market
+                );
+
+
+                // ==================================================
+                // EXTRAER DATOS
+                // ==================================================
+
+                const jugador =
+                    market.jugador ??
+                    market.player ??
+                    "Jugador pendiente";
+
+
+                const mercado =
+                    market.mercado ??
+                    market.market ??
+                    "Remates";
+
+
+                const linea =
+                    market.linea ??
+                    market.line ??
+                    "—";
+
+
+                const rating =
+                    market.fa_rating ??
+                    market.faRating ??
+                    market.rating ??
+                    "—";
+
+
+                const probabilidad =
+                    market.probabilidad_fa ??
+                    market.probabilidad_fa_pct ??
+                    market.probabilidad ??
+                    "—";
+
+
+                const cuota =
+                    market.cuota ??
+                    market.odds ??
+                    "—";
+
+
+                const valueEdge =
+                    market.value_edge ??
+                    market.valueEdge ??
+                    "—";
+
+
+                const señal =
+                    market.señal ??
+                    market.signal ??
+                    "ANALIZANDO";
+
+
+                const motor =
+                    market.motor ??
+                    "Fútbol Analytics";
+
+
+                // ==================================================
+                // ACTUALIZAR SCANNER
+                // ==================================================
+
+                actualizarScanner({
+
+                    jugador,
+
+                    mercado,
+
+                    linea,
+
+                    rating,
+
+                    probabilidad,
+
+                    cuota,
+
+                    valueEdge,
+
+                    señal,
+
+                    motor
+
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "PLAYER MARKET ERROR:",
+                    error
+                );
+
+
+                actualizarScanner({
+
+                    jugador:
+                        "Sin datos",
+
+                    mercado:
+                        "Remates",
+
+                    linea:
+                        "—",
+
+                    rating:
+                        "—",
+
+                    probabilidad:
+                        "—",
+
+                    cuota:
+                        "—",
+
+                    valueEdge:
+                        "—",
+
+                    señal:
+                        "SIN CONEXIÓN",
+
+                    motor:
+                        "Fútbol Analytics"
+
+                });
+
+            }
+
+
+            // ==================================================
+            // 2. CARGAR PARTIDOS
+            // ==================================================
+
+            try {
+
+                const respuestaPartidos =
+                    await fetch(API_PARTIDOS, {
+                        cache: "no-store"
+                    });
+
+
+                if (!respuestaPartidos.ok) {
+
+                    throw new Error(
+                        "HTTP " +
+                        respuestaPartidos.status +
+                        " en partidos"
+                    );
+                }
+
+
+                const datosPartidos =
+                    await respuestaPartidos.json();
+
+
+                console.log(
+                    "PARTIDOS API:",
+                    datosPartidos
+                );
+
+
+                /*
+                 * El backend actual parece utilizar:
+                 *
+                 * {
+                 *   matches: [...]
+                 * }
+                 *
+                 * También aceptamos directamente
+                 * un array por seguridad.
+                 */
+
+                const partidos =
+                    Array.isArray(datosPartidos)
+                        ? datosPartidos
+                        : (
+                            datosPartidos.matches ||
+                            datosPartidos.partidos ||
+                            []
+                        );
+
+
+                // ==================================================
+                // ACTUALIZAR TOTAL PARTIDOS
+                // ==================================================
+
+                const totalPartidos =
+                    document.getElementById(
+                        "total-partidos"
+                    );
+
+
+                if (totalPartidos) {
+
+                    totalPartidos.textContent =
+                        partidos.length;
+                }
+
+
+                // ==================================================
+                // SIN PARTIDOS
+                // ==================================================
+
+                if (!partidos.length) {
+
+                    contenedor.innerHTML = `
+
+                        <p class="mensaje-estado">
+
+                            No hay partidos programados
+                            para el día de hoy.
+
+                        </p>
+
+                    `;
+
+                    return;
+                }
+
+
+                // ==================================================
+                // LIMPIAR CONTENEDOR
+                // ==================================================
+
+                contenedor.innerHTML = "";
+
+
+                // ==================================================
+                // MOSTRAR PARTIDOS
+                // ==================================================
+
+                partidos.forEach(p => {
+
+
+                    /*
+                     * Compatibilidad con diferentes
+                     * nombres de campos del backend.
+                     */
+
+                    const local =
+                        p.local ??
+                        p.homeTeam ??
+                        p.home_team ??
+                        p.home ??
+                        "Local";
+
+
+                    const visitante =
+                        p.visitante ??
+                        p.awayTeam ??
+                        p.away_team ??
+                        p.away ??
+                        "Visitante";
+
+
+                    const competicion =
+                        p.competicion ??
+                        p.competition ??
+                        p.league ??
+                        "Competición";
+
+
+                    const estado =
+                        p.estado ??
+                        p.status ??
+                        "SCHEDULED";
+
+
+                    const golesLocal =
+                        p.goles_local ??
+                        p.homeGoals ??
+                        p.home_goals ??
+                        p.golesLocal;
+
+
+                    const golesVisitante =
+                        p.goles_visitante ??
+                        p.awayGoals ??
+                        p.away_goals ??
+                        p.golesVisitante;
+
+
+                    // ==================================================
+                    // MARCADOR
+                    // ==================================================
+
+                    let displayScore = "VS";
+
+
+                    const estadoTexto =
+                        String(estado)
+                            .toUpperCase();
+
+
+                    if (
+                        estadoTexto !== "TIMED" &&
+                        estadoTexto !== "SCHEDULED" &&
+                        golesLocal !== undefined &&
+                        golesVisitante !== undefined
+                    ) {
+
+                        displayScore =
+                            `${golesLocal} - ${golesVisitante}`;
+                    }
+
+
+                    // ==================================================
+                    // CREAR TARJETA
+                    // ==================================================
+
+                    const tarjeta =
+                        document.createElement("div");
+
+
+                    tarjeta.className =
+                        "card-partido";
+
+
+                    tarjeta.innerHTML = `
+
+                        <div class="card-header">
+
+                            <span class="competicion">
+
+                                ${escaparHTML(
+                                    competicion
+                                )}
+
+                            </span>
+
+                            <span class="estado">
+
+                                ${escaparHTML(
+                                    estado
+                                )}
+
+                            </span>
 
                         </div>
 
 
-                        <span
-                            class="ivj-badge"
-                            style="background-color:#38bdf8"
-                        >
+                        <div class="marcador-container">
 
-                            FA ${rating}/100
 
-                        </span>
+                            <span class="equipo local">
+
+                                ${escaparHTML(
+                                    local
+                                )}
+
+                            </span>
+
+
+                            <span class="resultado">
+
+                                ${escaparHTML(
+                                    displayScore
+                                )}
+
+                            </span>
+
+
+                            <span class="equipo visitante">
+
+                                ${escaparHTML(
+                                    visitante
+                                )}
+
+                            </span>
+
+
+                        </div>
+
+
+                        <div class="scanner-panel">
+
+
+                            <div class="scanner-title">
+
+                                🎯 PLAYER MARKET SCANNER
+
+                            </div>
+
+
+                            <div class="scanner-body">
+
+
+                                <div class="player-info">
+
+                                    🎯
+
+                                    <strong>
+
+                                        ${escaparHTML(
+                                            jugador
+                                        )}
+
+                                    </strong>
+
+                                    |
+
+                                    ${escaparHTML(
+                                        mercado
+                                    )}
+
+                                </div>
+
+
+                                <span
+                                    class="ivj-badge"
+                                    style="
+                                        background-color:#38bdf8;
+                                    "
+                                >
+
+                                    FA ${escaparHTML(
+                                        String(rating)
+                                    )}/100
+
+                                </span>
+
+
+                            </div>
+
+
+                            <div class="scanner-data">
+
+                                Línea:
+                                ${escaparHTML(
+                                    String(linea)
+                                )}
+
+                                &nbsp; | &nbsp;
+
+                                Probabilidad FA:
+                                ${escaparHTML(
+                                    String(probabilidad)
+                                )}
+
+                                &nbsp; | &nbsp;
+
+                                Cuota:
+                                ${escaparHTML(
+                                    String(cuota)
+                                )}
+
+                                &nbsp; | &nbsp;
+
+                                Value Edge:
+                                ${escaparHTML(
+                                    String(valueEdge)
+                                )}
+
+                            </div>
+
+
+                        </div>
+
+                    `;
+
+
+                    contenedor.appendChild(
+                        tarjeta
+                    );
+
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "PARTIDOS ERROR:",
+                    error
+                );
+
+
+                contenedor.innerHTML = `
+
+                    <div class="error">
+
+                        No se pudieron cargar
+                        los partidos.
+
+                        <br><br>
+
+                        <small>
+
+                            Revisa la conexión
+                            con el backend.
+
+                        </small>
 
                     </div>
 
+                `;
 
-                    <div style="
-                        margin-top:8px;
-                        color:#94a3b8;
-                        font-size:0.8em;
-                    ">
+            }
 
-                        Línea: ${linea}
-                        &nbsp; | &nbsp;
-                        Probabilidad FA: ${probabilidad}
-                        &nbsp; | &nbsp;
-                        Cuota: ${cuota}
-                        &nbsp; | &nbsp;
-                        Value Edge: ${valueEdge}
-
-                    </div>
-
-                </div>
-
-            `;
+        }
 
 
-            contenedor.appendChild(tarjeta);
+        // ==================================================
+        // ESCAPAR HTML
+        // ==================================================
 
-        });
+        function escaparHTML(valor) {
+
+            const texto =
+                String(valor ?? "");
 
 
-    } catch (error) {
+            return texto
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
 
-        console.error(
-            "Fútbol Analytics:",
-            error
+
+        // ==================================================
+        // ACTUALIZAR PLAYER MARKET SCANNER V1.2
+        // ==================================================
+
+        function actualizarScanner(data) {
+
+
+            const jugador =
+                document.getElementById(
+                    "scanner-jugador"
+                );
+
+
+            const mercado =
+                document.getElementById(
+                    "scanner-mercado"
+                );
+
+
+            const linea =
+                document.getElementById(
+                    "scanner-linea"
+                );
+
+
+            const rating =
+                document.getElementById(
+                    "scanner-rating"
+                );
+
+
+            const probabilidad =
+                document.getElementById(
+                    "scanner-probabilidad"
+                );
+
+
+            const cuota =
+                document.getElementById(
+                    "scanner-cuota"
+                );
+
+
+            /*
+             * IMPORTANTE:
+             *
+             * El HTML utiliza:
+             *
+             * scanner-value
+             *
+             * No scanner-value-edge.
+             */
+
+            const valueEdge =
+                document.getElementById(
+                    "scanner-value"
+                );
+
+
+            const señal =
+                document.getElementById(
+                    "scanner-senal"
+                );
+
+
+            // ==================================================
+            // JUGADOR
+            // ==================================================
+
+            if (jugador) {
+
+                jugador.textContent =
+                    data.jugador ??
+                    "Jugador pendiente";
+            }
+
+
+            // ==================================================
+            // MERCADO
+            // ==================================================
+
+            if (mercado) {
+
+                mercado.textContent =
+                    data.mercado ??
+                    "Remates";
+            }
+
+
+            // ==================================================
+            // LÍNEA
+            // ==================================================
+
+            if (linea) {
+
+                linea.textContent =
+                    data.linea ??
+                    "—";
+            }
+
+
+            // ==================================================
+            // FA RATING
+            // ==================================================
+
+            if (rating) {
+
+                rating.textContent =
+                    data.rating ??
+                    "—";
+            }
+
+
+            // ==================================================
+            // PROBABILIDAD
+            // ==================================================
+
+            if (probabilidad) {
+
+                let prob =
+                    data.probabilidad;
+
+
+                /*
+                 * Si el backend entrega
+                 * 0.68, mostramos 68%.
+                 *
+                 * Si entrega 68, mostramos 68%.
+                 */
+
+                if (
+                    typeof prob === "number" &&
+                    prob > 0 &&
+                    prob < 1
+                ) {
+
+                    prob =
+                        (prob * 100)
+                        .toFixed(0);
+                }
+
+
+                if (
+                    prob !== undefined &&
+                    prob !== null &&
+                    prob !== "—"
+                ) {
+
+                    probabilidad.textContent =
+                        String(prob)
+                            .includes("%")
+                            ? prob
+                            : `${prob}%`;
+
+                } else {
+
+                    probabilidad.textContent =
+                        "—";
+                }
+
+            }
+
+
+            // ==================================================
+            // CUOTA
+            // ==================================================
+
+            if (cuota) {
+
+                cuota.textContent =
+                    data.cuota ??
+                    "—";
+            }
+
+
+            // ==================================================
+            // VALUE EDGE
+            // ==================================================
+
+            if (valueEdge) {
+
+
+                const ve =
+                    data.valueEdge ??
+                    data.value_edge;
+
+
+                if (
+                    ve !== undefined &&
+                    ve !== null &&
+                    ve !== "—" &&
+                    ve !== ""
+                ) {
+
+
+                    const numero =
+                        Number(ve);
+
+
+                    valueEdge.textContent =
+                        Number.isFinite(numero)
+                            ? numero.toFixed(2)
+                            : String(ve);
+
+
+                } else {
+
+                    valueEdge.textContent =
+                        "—";
+                }
+
+            }
+
+
+            // ==================================================
+            // SEÑAL
+            // ==================================================
+
+            if (señal) {
+
+                señal.textContent =
+                    data.señal ??
+                    data.signal ??
+                    "ANALIZANDO";
+            }
+
+
+            // ==================================================
+            // DEBUG
+            // ==================================================
+
+            console.log(
+                "================================"
+            );
+
+            console.log(
+                "PLAYER MARKET SCANNER V1.2"
+            );
+
+            console.log(
+                "Jugador:",
+                data.jugador
+            );
+
+            console.log(
+                "Mercado:",
+                data.mercado
+            );
+
+            console.log(
+                "Línea:",
+                data.linea
+            );
+
+            console.log(
+                "FA Rating:",
+                data.rating
+            );
+
+            console.log(
+                "Probabilidad:",
+                data.probabilidad
+            );
+
+            console.log(
+                "Cuota:",
+                data.cuota
+            );
+
+            console.log(
+                "Value Edge:",
+                data.valueEdge,
+                data.value_edge
+            );
+
+            console.log(
+                "Señal:",
+                data.señal,
+                data.signal
+            );
+
+            console.log(
+                "Motor:",
+                data.motor
+            );
+
+            console.log(
+                "================================"
+            );
+
+        }
+
+
+        // ==================================================
+        // INICIAR APLICACIÓN
+        // ==================================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            cargarAnalytics
         );
 
 
-        contenedor.innerHTML = `
-
-            <p class="mensaje-estado">
-
-                Error al conectar con el motor
-                de Fútbol Analytics.
-
-            </p>
-
-        `;
-
-    }
-}
-
-
-// ==================================================
-// ACTUALIZAR SCANNER V1.2
-// ==================================================
-
-function actualizarScanner(data) {
-
-    // Buscamos elementos por ID.
-    // Si existen en tu dashboard, se actualizan
-    // automáticamente.
-
-    const jugador =
-        document.getElementById("scanner-jugador");
-
-    const mercado =
-        document.getElementById("scanner-mercado");
-
-    const linea =
-        document.getElementById("scanner-linea");
-
-    const rating =
-        document.getElementById("scanner-rating");
-
-    const probabilidad =
-        document.getElementById("scanner-probabilidad");
-
-    const cuota =
-        document.getElementById("scanner-cuota");
-
-    const valueEdge =
-        document.getElementById("scanner-value-edge");
-
-    const señal =
-        document.getElementById("scanner-senal");
-
-
-    if (jugador)
-        jugador.textContent = data.jugador;
-
-    if (mercado)
-        mercado.textContent = data.mercado;
-
-    if (linea)
-        linea.textContent = data.linea;
-
-    if (rating)
-        rating.textContent = data.rating;
-
-    if (probabilidad)
-        probabilidad.textContent = data.probabilidad;
-
-    if (cuota)
-        cuota.textContent = data.cuota;
-if (valueEdge) {
-    const ve = data.value_edge ?? data.valueEdge;
-    valueEdge.textContent = ve !== undefined && ve !== null
-        ? Number(ve).toFixed(2)
-        : "-";
-}
-
-if (señal)
-    señal.textContent = data.señal ?? data.signal ?? "ANALIZANDO";
-
-console.log("DEBUG VALUE EDGE:", data.valueEdge, data.value_edge);
-console.log("DEBUG SEÑAL:", data.señal, data.signal);
-
-console.log(
-    "PLAYER MARKET SCANNER V1.2",
-    data
-);
-
-// ==================================================
-// INICIAR APLICACIÓN
-// ==================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    cargarAnalytics
-);
-</script>
+    </script>
 
 
 </body>
