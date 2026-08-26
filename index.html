@@ -19,7 +19,6 @@
             box-sizing: border-box;
         }
 
-
         body {
 
             margin: 0;
@@ -165,7 +164,7 @@
 
 
         /* =========================
-           PARTIDO
+           PARTIDOS
         ========================= */
 
         .card-partido {
@@ -207,6 +206,8 @@
                 uppercase;
 
             letter-spacing: 1px;
+
+            gap: 10px;
         }
 
 
@@ -227,12 +228,10 @@
             background: #1e293b;
 
             color: #38bdf8;
+
+            white-space: nowrap;
         }
 
-
-        /* =========================
-           EQUIPOS
-        ========================= */
 
         .marcador-container {
 
@@ -288,7 +287,7 @@
 
 
         /* =========================
-           PLAYER MARKET
+           PLAYER MARKET CARD
         ========================= */
 
         .scanner-panel {
@@ -516,14 +515,6 @@
         }
 
 
-        .scanner-metric-title {
-
-            color: #94a3b8;
-
-            font-size: .72rem;
-        }
-
-
         .scanner-metric-value {
 
             color: #38bdf8;
@@ -692,7 +683,7 @@
             .dashboard {
 
                 grid-template-columns:
-                    repeat(2, 1fr);
+                    repeat(2,1fr);
             }
 
 
@@ -801,7 +792,9 @@
 
     <div class="header">
 
-        <h1>⚽ FÚTBOL ANALYTICS</h1>
+        <h1>
+            ⚽ FÚTBOL ANALYTICS
+        </h1>
 
         <p>
             Player Market Scanner
@@ -1069,14 +1062,18 @@
 
 
         <div class="section-title">
+
             🔎 Partidos disponibles
+
         </div>
 
 
         <div id="lista-partidos">
 
             <div class="loading">
+
                 ⚽ Cargando datos reales...
+
             </div>
 
         </div>
@@ -1112,8 +1109,53 @@
         const API_PARTIDOS =
             "https://stats-backend-jpd3.onrender.com/api/partidos-hoy";
 
+
         const API_MARKET =
             "https://stats-backend-jpd3.onrender.com/api/player-market";
+
+
+        // ==================================================
+        // DATOS GLOBALES DEL PLAYER MARKET
+        //
+        // ESTE ES EL CAMBIO PRINCIPAL.
+        //
+        // Antes "jugador", "mercado", etc. estaban
+        // encerrados dentro de otro try.
+        //
+        // Ahora scannerData está disponible para
+        // TODA la función cargarAnalytics().
+        // ==================================================
+
+        let scannerData = {
+
+            jugador:
+                "Jugador pendiente",
+
+            mercado:
+                "Remates",
+
+            linea:
+                "—",
+
+            rating:
+                "—",
+
+            probabilidad:
+                "—",
+
+            cuota:
+                "—",
+
+            valueEdge:
+                "—",
+
+            señal:
+                "ANALIZANDO",
+
+            motor:
+                "Fútbol Analytics V1.2"
+
+        };
 
 
         // ==================================================
@@ -1122,6 +1164,7 @@
 
         async function cargarAnalytics() {
 
+
             const contenedor =
                 document.getElementById(
                     "lista-partidos"
@@ -1129,15 +1172,20 @@
 
 
             // ==================================================
-            // 1. CARGAR PLAYER MARKET
+            // 1. PLAYER MARKET
             // ==================================================
 
             try {
 
+
                 const respuestaMarket =
-                    await fetch(API_MARKET, {
-                        cache: "no-store"
-                    });
+                    await fetch(
+                        API_MARKET,
+                        {
+                            cache:
+                                "no-store"
+                        }
+                    );
 
 
                 if (!respuestaMarket.ok) {
@@ -1147,6 +1195,7 @@
                         respuestaMarket.status +
                         " en Player Market"
                     );
+
                 }
 
 
@@ -1161,92 +1210,79 @@
 
 
                 // ==================================================
-                // EXTRAER DATOS
+                // NORMALIZAR DATOS
                 // ==================================================
 
-                const jugador =
-                    market.jugador ??
-                    market.player ??
-                    "Jugador pendiente";
+                scannerData = {
+
+                    jugador:
+                        market.jugador ??
+                        market.player ??
+                        "Jugador pendiente",
 
 
-                const mercado =
-                    market.mercado ??
-                    market.market ??
-                    "Remates";
+                    mercado:
+                        market.mercado ??
+                        market.market ??
+                        "Remates",
 
 
-                const linea =
-                    market.linea ??
-                    market.line ??
-                    "—";
+                    linea:
+                        market.linea ??
+                        market.line ??
+                        "—",
 
 
-                const rating =
-                    market.fa_rating ??
-                    market.faRating ??
-                    market.rating ??
-                    "—";
+                    rating:
+                        market.fa_rating ??
+                        market.faRating ??
+                        market.rating ??
+                        "—",
 
 
-                const probabilidad =
-                    market.probabilidad_fa ??
-                    market.probabilidad_fa_pct ??
-                    market.probabilidad ??
-                    "—";
+                    probabilidad:
+                        market.probabilidad_fa ??
+                        market.probabilidad_fa_pct ??
+                        market.probabilidad ??
+                        "—",
 
 
-                const cuota =
-                    market.cuota ??
-                    market.odds ??
-                    "—";
+                    cuota:
+                        market.cuota ??
+                        market.odds ??
+                        "—",
 
 
-                const valueEdge =
-                    market.value_edge ??
-                    market.valueEdge ??
-                    "—";
+                    valueEdge:
+                        market.value_edge ??
+                        market.valueEdge ??
+                        "—",
 
 
-                const señal =
-                    market.señal ??
-                    market.signal ??
-                    "ANALIZANDO";
+                    señal:
+                        market.señal ??
+                        market.signal ??
+                        "ANALIZANDO",
 
 
-                const motor =
-                    market.motor ??
-                    "Fútbol Analytics";
+                    motor:
+                        market.motor ??
+                        "Fútbol Analytics V1.2"
+
+                };
 
 
                 // ==================================================
-                // ACTUALIZAR SCANNER
+                // ACTUALIZAR PANEL PRINCIPAL
                 // ==================================================
 
-                actualizarScanner({
-
-                    jugador,
-
-                    mercado,
-
-                    linea,
-
-                    rating,
-
-                    probabilidad,
-
-                    cuota,
-
-                    valueEdge,
-
-                    señal,
-
-                    motor
-
-                });
+                actualizarScanner(
+                    scannerData
+                );
 
 
             } catch (error) {
+
 
                 console.error(
                     "PLAYER MARKET ERROR:",
@@ -1254,7 +1290,7 @@
                 );
 
 
-                actualizarScanner({
+                scannerData = {
 
                     jugador:
                         "Sin datos",
@@ -1281,9 +1317,14 @@
                         "SIN CONEXIÓN",
 
                     motor:
-                        "Fútbol Analytics"
+                        "Fútbol Analytics V1.2"
 
-                });
+                };
+
+
+                actualizarScanner(
+                    scannerData
+                );
 
             }
 
@@ -1294,10 +1335,15 @@
 
             try {
 
+
                 const respuestaPartidos =
-                    await fetch(API_PARTIDOS, {
-                        cache: "no-store"
-                    });
+                    await fetch(
+                        API_PARTIDOS,
+                        {
+                            cache:
+                                "no-store"
+                        }
+                    );
 
 
                 if (!respuestaPartidos.ok) {
@@ -1307,6 +1353,7 @@
                         respuestaPartidos.status +
                         " en partidos"
                     );
+
                 }
 
 
@@ -1320,29 +1367,31 @@
                 );
 
 
-                /*
-                 * El backend actual parece utilizar:
-                 *
-                 * {
-                 *   matches: [...]
-                 * }
-                 *
-                 * También aceptamos directamente
-                 * un array por seguridad.
-                 */
+                // ==================================================
+                // SOPORTAMOS VARIOS FORMATOS DEL BACKEND
+                // ==================================================
 
                 const partidos =
-                    Array.isArray(datosPartidos)
-                        ? datosPartidos
-                        : (
-                            datosPartidos.matches ||
-                            datosPartidos.partidos ||
-                            []
-                        );
+
+                    Array.isArray(
+                        datosPartidos
+                    )
+
+                    ?
+
+                    datosPartidos
+
+                    :
+
+                    (
+                        datosPartidos.matches ??
+                        datosPartidos.partidos ??
+                        []
+                    );
 
 
                 // ==================================================
-                // ACTUALIZAR TOTAL PARTIDOS
+                // TOTAL PARTIDOS
                 // ==================================================
 
                 const totalPartidos =
@@ -1355,6 +1404,7 @@
 
                     totalPartidos.textContent =
                         partidos.length;
+
                 }
 
 
@@ -1376,12 +1426,9 @@
                     `;
 
                     return;
+
                 }
 
-
-                // ==================================================
-                // LIMPIAR CONTENEDOR
-                // ==================================================
 
                 contenedor.innerHTML = "";
 
@@ -1390,193 +1437,223 @@
                 // MOSTRAR PARTIDOS
                 // ==================================================
 
-                partidos.forEach(p => {
+                partidos.forEach(
+                    p => {
 
 
-                    /*
-                     * Compatibilidad con diferentes
-                     * nombres de campos del backend.
-                     */
+                        // ==================================================
+                        // EQUIPO LOCAL
+                        // ==================================================
 
-                    const local =
-                        p.local ??
-                        p.homeTeam ??
-                        p.home_team ??
-                        p.home ??
-                        "Local";
+                        const local =
 
+                            p.local ??
 
-                    const visitante =
-                        p.visitante ??
-                        p.awayTeam ??
-                        p.away_team ??
-                        p.away ??
-                        "Visitante";
+                            p.homeTeam ??
+
+                            p.home_team ??
+
+                            p.home ??
+
+                            p.equipo_local ??
+
+                            "Local";
 
 
-                    const competicion =
-                        p.competicion ??
-                        p.competition ??
-                        p.league ??
-                        "Competición";
+                        // ==================================================
+                        // EQUIPO VISITANTE
+                        // ==================================================
+
+                        const visitante =
+
+                            p.visitante ??
+
+                            p.awayTeam ??
+
+                            p.away_team ??
+
+                            p.away ??
+
+                            p.equipo_visitante ??
+
+                            "Visitante";
 
 
-                    const estado =
-                        p.estado ??
-                        p.status ??
-                        "SCHEDULED";
+                        // ==================================================
+                        // COMPETICIÓN
+                        // ==================================================
+
+                        const competicion =
+
+                            p.competicion ??
+
+                            p.competition ??
+
+                            p.league ??
+
+                            "Competición";
 
 
-                    const golesLocal =
-                        p.goles_local ??
-                        p.homeGoals ??
-                        p.home_goals ??
-                        p.golesLocal;
+                        // ==================================================
+                        // ESTADO
+                        // ==================================================
+
+                        const estado =
+
+                            p.estado ??
+
+                            p.status ??
+
+                            "SCHEDULED";
 
 
-                    const golesVisitante =
-                        p.goles_visitante ??
-                        p.awayGoals ??
-                        p.away_goals ??
-                        p.golesVisitante;
+                        // ==================================================
+                        // GOLES LOCAL
+                        // ==================================================
+
+                        const golesLocal =
+
+                            p.goles_local ??
+
+                            p.homeGoals ??
+
+                            p.home_goals ??
+
+                            p.golesLocal;
 
 
-                    // ==================================================
-                    // MARCADOR
-                    // ==================================================
+                        // ==================================================
+                        // GOLES VISITANTE
+                        // ==================================================
 
-                    let displayScore = "VS";
+                        const golesVisitante =
 
+                            p.goles_visitante ??
 
-                    const estadoTexto =
-                        String(estado)
-                            .toUpperCase();
+                            p.awayGoals ??
 
+                            p.away_goals ??
 
-                    if (
-                        estadoTexto !== "TIMED" &&
-                        estadoTexto !== "SCHEDULED" &&
-                        golesLocal !== undefined &&
-                        golesVisitante !== undefined
-                    ) {
-
-                        displayScore =
-                            `${golesLocal} - ${golesVisitante}`;
-                    }
+                            p.golesVisitante;
 
 
-                    // ==================================================
-                    // CREAR TARJETA
-                    // ==================================================
+                        // ==================================================
+                        // MARCADOR
+                        // ==================================================
 
-                    const tarjeta =
-                        document.createElement("div");
-
-
-                    tarjeta.className =
-                        "card-partido";
+                        let displayScore =
+                            "VS";
 
 
-                    tarjeta.innerHTML = `
-
-                        <div class="card-header">
-
-                            <span class="competicion">
-
-                                ${escaparHTML(
-                                    competicion
-                                )}
-
-                            </span>
-
-                            <span class="estado">
-
-                                ${escaparHTML(
-                                    estado
-                                )}
-
-                            </span>
-
-                        </div>
+                        const estadoTexto =
+                            String(
+                                estado
+                            ).toUpperCase();
 
 
-                        <div class="marcador-container">
+                        if (
+
+                            estadoTexto !==
+                            "TIMED"
+
+                            &&
+
+                            estadoTexto !==
+                            "SCHEDULED"
+
+                            &&
+
+                            golesLocal !==
+                            undefined
+
+                            &&
+
+                            golesLocal !==
+                            null
+
+                            &&
+
+                            golesVisitante !==
+                            undefined
+
+                            &&
+
+                            golesVisitante !==
+                            null
+
+                        ) {
+
+                            displayScore =
+
+                                `${golesLocal} - ${golesVisitante}`;
+
+                        }
 
 
-                            <span class="equipo local">
+                        // ==================================================
+                        // CREAR TARJETA
+                        // ==================================================
 
-                                ${escaparHTML(
-                                    local
-                                )}
-
-                            </span>
-
-
-                            <span class="resultado">
-
-                                ${escaparHTML(
-                                    displayScore
-                                )}
-
-                            </span>
+                        const tarjeta =
+                            document.createElement(
+                                "div"
+                            );
 
 
-                            <span class="equipo visitante">
-
-                                ${escaparHTML(
-                                    visitante
-                                )}
-
-                            </span>
+                        tarjeta.className =
+                            "card-partido";
 
 
-                        </div>
+                        tarjeta.innerHTML = `
+
+                            <div class="card-header">
+
+                                <span class="competicion">
+
+                                    ${escaparHTML(
+                                        competicion
+                                    )}
+
+                                </span>
 
 
-                        <div class="scanner-panel">
+                                <span class="estado">
 
+                                    ${escaparHTML(
+                                        estado
+                                    )}
 
-                            <div class="scanner-title">
-
-                                🎯 PLAYER MARKET SCANNER
+                                </span>
 
                             </div>
 
 
-                            <div class="scanner-body">
+                            <div class="marcador-container">
 
 
-                                <div class="player-info">
-
-                                    🎯
-
-                                    <strong>
-
-                                        ${escaparHTML(
-                                            jugador
-                                        )}
-
-                                    </strong>
-
-                                    |
+                                <span class="equipo local">
 
                                     ${escaparHTML(
-                                        mercado
+                                        local
                                     )}
 
-                                </div>
+                                </span>
 
 
-                                <span
-                                    class="ivj-badge"
-                                    style="
-                                        background-color:#38bdf8;
-                                    "
-                                >
+                                <span class="resultado">
 
-                                    FA ${escaparHTML(
-                                        String(rating)
-                                    )}/100
+                                    ${escaparHTML(
+                                        displayScore
+                                    )}
+
+                                </span>
+
+
+                                <span class="equipo visitante">
+
+                                    ${escaparHTML(
+                                        visitante
+                                    )}
 
                                 </span>
 
@@ -1584,55 +1661,150 @@
                             </div>
 
 
-                            <div class="scanner-data">
+                            <!-- PLAYER MARKET -->
 
-                                Línea:
-                                ${escaparHTML(
-                                    String(linea)
-                                )}
+                            <div class="scanner-panel">
 
-                                &nbsp; | &nbsp;
 
-                                Probabilidad FA:
-                                ${escaparHTML(
-                                    String(probabilidad)
-                                )}
+                                <div class="scanner-title">
 
-                                &nbsp; | &nbsp;
+                                    🎯 PLAYER MARKET SCANNER
 
-                                Cuota:
-                                ${escaparHTML(
-                                    String(cuota)
-                                )}
+                                </div>
 
-                                &nbsp; | &nbsp;
 
-                                Value Edge:
-                                ${escaparHTML(
-                                    String(valueEdge)
-                                )}
+                                <div class="scanner-body">
+
+
+                                    <div class="player-info">
+
+                                        🎯
+
+                                        <strong>
+
+                                            ${escaparHTML(
+                                                scannerData.jugador
+                                            )}
+
+                                        </strong>
+
+                                        &nbsp;|&nbsp;
+
+                                        ${escaparHTML(
+                                            scannerData.mercado
+                                        )}
+
+                                    </div>
+
+
+                                    <span
+                                        class="ivj-badge"
+                                        style="
+                                            background-color:#38bdf8;
+                                        "
+                                    >
+
+                                        FA
+
+                                        ${escaparHTML(
+                                            String(
+                                                scannerData.rating
+                                            )
+                                        )}
+
+                                        /100
+
+                                    </span>
+
+
+                                </div>
+
+
+                                <div class="scanner-data">
+
+
+                                    Línea:
+
+                                    ${escaparHTML(
+                                        String(
+                                            scannerData.linea
+                                        )
+                                    )}
+
+
+                                    &nbsp; | &nbsp;
+
+
+                                    Probabilidad FA:
+
+                                    ${escaparHTML(
+                                        formatearProbabilidad(
+                                            scannerData.probabilidad
+                                        )
+                                    )}
+
+
+                                    &nbsp; | &nbsp;
+
+
+                                    Cuota:
+
+                                    ${escaparHTML(
+                                        String(
+                                            scannerData.cuota
+                                        )
+                                    )}
+
+
+                                    &nbsp; | &nbsp;
+
+
+                                    Value Edge:
+
+                                    ${escaparHTML(
+                                        formatearValueEdge(
+                                            scannerData.valueEdge
+                                        )
+                                    )}
+
+
+                                </div>
+
 
                             </div>
 
-
-                        </div>
-
-                    `;
+                        `;
 
 
-                    contenedor.appendChild(
-                        tarjeta
-                    );
+                        contenedor.appendChild(
+                            tarjeta
+                        );
 
-                });
+                    }
+                );
 
 
             } catch (error) {
+
 
                 console.error(
                     "PARTIDOS ERROR:",
                     error
                 );
+
+
+                const totalPartidos =
+                    document.getElementById(
+                        "total-partidos"
+                    );
+
+
+                if (totalPartidos) {
+
+                    totalPartidos.textContent =
+                        "0";
+
+                }
 
 
                 contenedor.innerHTML = `
@@ -1664,26 +1836,211 @@
         // ESCAPAR HTML
         // ==================================================
 
-        function escaparHTML(valor) {
+        function escaparHTML(
+            valor
+        ) {
 
-            const texto =
-                String(valor ?? "");
 
+            return String(
+                valor ?? ""
+            )
 
-            return texto
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
         }
 
 
         // ==================================================
-        // ACTUALIZAR PLAYER MARKET SCANNER V1.2
+        // FORMATEAR PROBABILIDAD
         // ==================================================
 
-        function actualizarScanner(data) {
+        function formatearProbabilidad(
+            valor
+        ) {
+
+
+            if (
+
+                valor ===
+                undefined
+
+                ||
+
+                valor ===
+                null
+
+                ||
+
+                valor ===
+                ""
+
+                ||
+
+                valor ===
+                "—"
+
+            ) {
+
+                return "—";
+
+            }
+
+
+            let numero =
+                Number(
+                    valor
+                );
+
+
+            if (
+                Number.isFinite(
+                    numero
+                )
+            ) {
+
+
+                if (
+                    numero > 0 &&
+                    numero < 1
+                ) {
+
+                    numero =
+                        numero * 100;
+
+                }
+
+
+                return (
+
+                    numero.toFixed(
+                        Number.isInteger(
+                            numero
+                        )
+                            ? 0
+                            : 1
+                    )
+
+                    +
+
+                    "%"
+
+                );
+
+            }
+
+
+            const texto =
+                String(
+                    valor
+                );
+
+
+            return texto.includes(
+                "%"
+            )
+
+                ?
+
+                texto
+
+                :
+
+                texto + "%";
+
+        }
+
+
+        // ==================================================
+        // FORMATEAR VALUE EDGE
+        // ==================================================
+
+        function formatearValueEdge(
+            valor
+        ) {
+
+
+            if (
+
+                valor ===
+                undefined
+
+                ||
+
+                valor ===
+                null
+
+                ||
+
+                valor ===
+                ""
+
+                ||
+
+                valor ===
+                "—"
+
+            ) {
+
+                return "—";
+
+            }
+
+
+            const numero =
+                Number(
+                    valor
+                );
+
+
+            return Number.isFinite(
+                numero
+            )
+
+                ?
+
+                numero.toFixed(
+                    2
+                )
+
+                :
+
+                String(
+                    valor
+                );
+
+        }
+
+
+        // ==================================================
+        // ACTUALIZAR SCANNER
+        // ==================================================
+
+        function actualizarScanner(
+            data
+        ) {
 
 
             const jugador =
@@ -1722,16 +2079,6 @@
                 );
 
 
-            /*
-             * IMPORTANTE:
-             *
-             * El HTML utiliza:
-             *
-             * scanner-value
-             *
-             * No scanner-value-edge.
-             */
-
             const valueEdge =
                 document.getElementById(
                     "scanner-value"
@@ -1751,8 +2098,11 @@
             if (jugador) {
 
                 jugador.textContent =
+
                     data.jugador ??
+
                     "Jugador pendiente";
+
             }
 
 
@@ -1763,8 +2113,11 @@
             if (mercado) {
 
                 mercado.textContent =
+
                     data.mercado ??
+
                     "Remates";
+
             }
 
 
@@ -1775,8 +2128,11 @@
             if (linea) {
 
                 linea.textContent =
+
                     data.linea ??
+
                     "—";
+
             }
 
 
@@ -1787,8 +2143,11 @@
             if (rating) {
 
                 rating.textContent =
+
                     data.rating ??
+
                     "—";
+
             }
 
 
@@ -1798,46 +2157,11 @@
 
             if (probabilidad) {
 
-                let prob =
-                    data.probabilidad;
+                probabilidad.textContent =
 
-
-                /*
-                 * Si el backend entrega
-                 * 0.68, mostramos 68%.
-                 *
-                 * Si entrega 68, mostramos 68%.
-                 */
-
-                if (
-                    typeof prob === "number" &&
-                    prob > 0 &&
-                    prob < 1
-                ) {
-
-                    prob =
-                        (prob * 100)
-                        .toFixed(0);
-                }
-
-
-                if (
-                    prob !== undefined &&
-                    prob !== null &&
-                    prob !== "—"
-                ) {
-
-                    probabilidad.textContent =
-                        String(prob)
-                            .includes("%")
-                            ? prob
-                            : `${prob}%`;
-
-                } else {
-
-                    probabilidad.textContent =
-                        "—";
-                }
+                    formatearProbabilidad(
+                        data.probabilidad
+                    );
 
             }
 
@@ -1849,8 +2173,11 @@
             if (cuota) {
 
                 cuota.textContent =
+
                     data.cuota ??
+
                     "—";
+
             }
 
 
@@ -1860,35 +2187,11 @@
 
             if (valueEdge) {
 
+                valueEdge.textContent =
 
-                const ve =
-                    data.valueEdge ??
-                    data.value_edge;
-
-
-                if (
-                    ve !== undefined &&
-                    ve !== null &&
-                    ve !== "—" &&
-                    ve !== ""
-                ) {
-
-
-                    const numero =
-                        Number(ve);
-
-
-                    valueEdge.textContent =
-                        Number.isFinite(numero)
-                            ? numero.toFixed(2)
-                            : String(ve);
-
-
-                } else {
-
-                    valueEdge.textContent =
-                        "—";
-                }
+                    formatearValueEdge(
+                        data.valueEdge
+                    );
 
             }
 
@@ -1900,9 +2203,13 @@
             if (señal) {
 
                 señal.textContent =
+
                     data.señal ??
+
                     data.signal ??
+
                     "ANALIZANDO";
+
             }
 
 
@@ -1950,14 +2257,12 @@
 
             console.log(
                 "Value Edge:",
-                data.valueEdge,
-                data.value_edge
+                data.valueEdge
             );
 
             console.log(
                 "Señal:",
-                data.señal,
-                data.signal
+                data.señal
             );
 
             console.log(
