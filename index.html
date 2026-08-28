@@ -1,300 +1,2376 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fútbol Analytics V1.3</title>
+
+<meta charset="utf-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1"
+>
+
+<title>Fútbol Analytics V1.6</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#07111f,#0b132b,#101c35);color:#fff;min-height:100vh;padding:20px}
-.header{max-width:1150px;margin:0 auto 25px;text-align:center}
-.header h1{margin:0;font-size:2.2rem;color:#38bdf8;letter-spacing:2px}
-.header p{margin-top:8px;color:#94a3b8;font-size:.95rem}
-.dashboard{max-width:1150px;margin:0 auto 25px;display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.stat-card{background:#121e35;border:1px solid #263957;border-radius:14px;padding:18px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,.25)}
-.stat-title{color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:1px}
-.stat-value{margin-top:8px;font-size:1.5rem;font-weight:bold;color:#38bdf8}
-.contenedor{max-width:1150px;margin:auto}
-.section-title{font-size:1.2rem;margin:25px 0 15px;color:#6fffe9}
-#player-market-scanner{padding:22px;background:linear-gradient(145deg,#111c3d,#17275a);border:1px solid rgba(56,189,248,.45);border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
-.scanner-main-title{text-align:center;margin-bottom:20px}
-.scanner-main-title .title{color:#38bdf8;font-size:1.35rem;font-weight:800;letter-spacing:1px}
-.scanner-main-title .subtitle{color:#94a3b8;font-size:.85rem;margin-top:5px}
-.scanner-top-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;margin-bottom:15px}
-.scanner-box{background:#0b132b;padding:15px;border-radius:12px}
-.scanner-label{color:#94a3b8;font-size:.75rem;text-transform:uppercase;letter-spacing:.5px}
-.scanner-value-text{color:#fff;font-size:1.15rem;font-weight:700;margin-top:5px}
-.scanner-market-text{color:#6fffe9;font-size:1.05rem;font-weight:700;margin-top:5px}
-.scanner-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.scanner-metric{background:#0b132b;padding:16px;border-radius:12px;text-align:center}
-.scanner-metric-value{color:#38bdf8;font-size:1.7rem;font-weight:800;margin-top:4px}
-.probabilidad{color:#6fffe9}.cuota{color:#fff}.value-edge{color:#22c55e}
-.scanner-unit{color:#64748b;font-size:.7rem}
-.scanner-signal{margin-top:15px;padding:16px;background:linear-gradient(90deg,#063b35,#092d38);border:1px solid rgba(34,197,94,.4);border-radius:12px;text-align:center}
-.scanner-signal-title{color:#94a3b8;font-size:.72rem;text-transform:uppercase;letter-spacing:1px}
-.scanner-signal-value{color:#22c55e;font-size:1.3rem;font-weight:800;margin-top:5px}
-.scanner-disclaimer{margin-top:12px;text-align:center;color:#64748b;font-size:.72rem}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-.filter-btn{border:1px solid #334155;background:#121e35;color:#cbd5e1;padding:9px 13px;border-radius:9px;cursor:pointer}
-.filter-btn.active{background:#0ea5e9;color:#06111f;border-color:#38bdf8;font-weight:bold}
-.market-table-wrap{overflow-x:auto;border:1px solid #263957;border-radius:14px}
-.market-table{width:100%;border-collapse:collapse;min-width:850px;background:#0d1730}
-.market-table th,.market-table td{padding:12px 10px;border-bottom:1px solid #22324d;text-align:left}
-.market-table th{font-size:.72rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px}
-.market-table td{font-size:.88rem}
-.rating{font-weight:800;color:#38bdf8}.edge{font-weight:800;color:#22c55e}
-.signal{font-weight:800}.signal.alta{color:#22c55e}.signal.media{color:#facc15}.signal.baja{color:#f87171}
-.card-partido{background:#121e35;border:1px solid #263957;border-radius:16px;padding:20px;margin-bottom:18px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;color:#94a3b8;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;gap:10px}
-.competicion{color:#6fffe9;font-weight:bold}.estado{padding:5px 9px;border-radius:7px;background:#1e293b;color:#38bdf8;white-space:nowrap}
-.marcador-container{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px}
-.equipo{font-size:1.15rem;font-weight:bold}.local{text-align:right}.visitante{text-align:left}
-.resultado{background:#07111f;border:1px solid #334155;padding:9px 14px;border-radius:10px;color:#38bdf8;font-weight:bold;white-space:nowrap}
-.match-meta{text-align:center;color:#64748b;font-size:.75rem;margin-top:10px}
-.match-ivj{margin-top:14px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
-.ivj{padding:7px 10px;border-radius:8px;background:#0b132b;color:#6fffe9;font-size:.75rem}
-.loading{text-align:center;padding:40px;color:#94a3b8}
-.error{background:#35151b;border:1px solid #7f1d1d;color:#fca5a5;padding:20px;border-radius:12px;text-align:center}
-.info{margin-top:20px;padding:15px;background:#101c35;border-radius:12px;color:#94a3b8;font-size:.85rem;text-align:center}
-.status-note{margin:12px 0;padding:12px;border-radius:10px;background:#0b132b;border:1px solid #263957;color:#94a3b8;font-size:.8rem}
-@media(max-width:800px){.dashboard{grid-template-columns:repeat(2,1fr)}.scanner-metrics{grid-template-columns:repeat(2,1fr)}.scanner-top-grid{grid-template-columns:1fr}}
-@media(max-width:600px){body{padding:12px}.header h1{font-size:1.7rem}.dashboard{grid-template-columns:1fr 1fr;gap:10px}.stat-card{padding:14px 8px}.stat-value{font-size:1.2rem}.marcador-container{gap:10px}.equipo{font-size:.9rem}.resultado{padding:7px 10px;font-size:.8rem}.scanner-metrics{grid-template-columns:1fr 1fr;gap:8px}.scanner-metric{padding:12px 6px}.scanner-metric-value{font-size:1.35rem}}
+
+:root{
+
+--bg:#07111f;
+--panel:#0d1b2d;
+--panel2:#11243a;
+--text:#f4f7fb;
+--muted:#9fb0c5;
+--line:#243952;
+--accent:#19c37d;
+--accent2:#2ea3ff;
+--danger:#ff647c;
+--warn:#ffc857;
+
+}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+
+margin:0;
+
+font-family:
+Inter,
+system-ui,
+-apple-system,
+Segoe UI,
+Roboto,
+sans-serif;
+
+background:
+linear-gradient(
+180deg,
+#07111f 0%,
+#0a1524 100%
+);
+
+color:var(--text);
+
+}
+
+.wrap{
+
+max-width:1250px;
+
+margin:0 auto;
+
+padding:22px;
+
+}
+
+header{
+
+display:flex;
+
+justify-content:space-between;
+
+gap:18px;
+
+align-items:center;
+
+margin-bottom:20px;
+
+flex-wrap:wrap;
+
+}
+
+h1{
+
+margin:0;
+
+font-size:28px;
+
+}
+
+h2{
+
+margin-top:0;
+
+}
+
+.subtitle{
+
+color:var(--muted);
+
+margin-top:5px;
+
+}
+
+.badge{
+
+padding:8px 12px;
+
+border-radius:999px;
+
+background:#123a31;
+
+color:#72e7b5;
+
+font-weight:700;
+
+font-size:13px;
+
+}
+
+.panel{
+
+background:
+rgba(13,27,45,.96);
+
+border:
+1px solid var(--line);
+
+border-radius:16px;
+
+padding:18px;
+
+margin-bottom:18px;
+
+}
+
+.controls{
+
+display:grid;
+
+grid-template-columns:
+180px
+1fr
+auto
+auto;
+
+gap:10px;
+
+align-items:end;
+
+}
+
+label{
+
+display:block;
+
+color:var(--muted);
+
+font-size:13px;
+
+margin-bottom:6px;
+
+}
+
+input,
+select,
+button{
+
+width:100%;
+
+min-height:44px;
+
+border-radius:10px;
+
+border:
+1px solid var(--line);
+
+background:#091728;
+
+color:var(--text);
+
+padding:10px 12px;
+
+font-size:14px;
+
+}
+
+button{
+
+cursor:pointer;
+
+background:var(--accent);
+
+color:#06130d;
+
+border:0;
+
+font-weight:800;
+
+}
+
+button.secondary{
+
+background:var(--accent2);
+
+color:white;
+
+}
+
+button.ghost{
+
+background:#172b43;
+
+color:white;
+
+border:
+1px solid var(--line);
+
+}
+
+button:disabled{
+
+opacity:.45;
+
+cursor:not-allowed;
+
+}
+
+.matches{
+
+display:grid;
+
+grid-template-columns:
+repeat(
+auto-fill,
+minmax(300px,1fr)
+);
+
+gap:12px;
+
+margin-top:15px;
+
+}
+
+.match{
+
+background:var(--panel2);
+
+border:
+1px solid var(--line);
+
+border-radius:14px;
+
+padding:15px;
+
+cursor:pointer;
+
+transition:.15s;
+
+}
+
+.match:hover,
+.match.selected{
+
+border-color:
+var(--accent2);
+
+transform:
+translateY(-1px);
+
+}
+
+.league{
+
+font-size:12px;
+
+color:var(--muted);
+
+margin-bottom:10px;
+
+}
+
+.teams{
+
+font-size:17px;
+
+font-weight:800;
+
+line-height:1.45;
+
+}
+
+.date{
+
+font-size:12px;
+
+color:var(--muted);
+
+margin-top:9px;
+
+}
+
+.status{
+
+font-size:12px;
+
+margin-top:10px;
+
+color:#8fc8ff;
+
+}
+
+.empty{
+
+color:var(--muted);
+
+padding:20px;
+
+text-align:center;
+
+}
+
+.fixture-head{
+
+display:flex;
+
+justify-content:space-between;
+
+gap:15px;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+}
+
+.fixture-title{
+
+font-size:23px;
+
+font-weight:900;
+
+}
+
+.lineup-state{
+
+padding:8px 11px;
+
+border-radius:10px;
+
+background:#3c2f12;
+
+color:#ffd96d;
+
+font-weight:800;
+
+}
+
+.lineup-state.ok{
+
+background:#123a31;
+
+color:#72e7b5;
+
+}
+
+.teams-grid{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:15px;
+
+margin-top:16px;
+
+}
+
+.team-card{
+
+background:#091728;
+
+border:
+1px solid var(--line);
+
+border-radius:14px;
+
+padding:14px;
+
+}
+
+.team-name{
+
+font-weight:900;
+
+margin-bottom:10px;
+
+}
+
+.player-list{
+
+display:grid;
+
+grid-template-columns:
+1fr 1fr;
+
+gap:7px;
+
+}
+
+.player-chip{
+
+padding:8px;
+
+background:#11243a;
+
+border-radius:9px;
+
+font-size:13px;
+
+border:
+1px solid #1e344e;
+
+}
+
+.starter{
+
+color:#72e7b5;
+
+font-weight:800;
+
+}
+
+.sub{
+
+color:var(--muted);
+
+}
+
+.table-wrap{
+
+overflow:auto;
+
+margin-top:15px;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+min-width:1000px;
+
+}
+
+th,
+td{
+
+padding:9px 8px;
+
+border-bottom:
+1px solid var(--line);
+
+text-align:left;
+
+font-size:12px;
+
+}
+
+th{
+
+color:var(--muted);
+
+font-weight:700;
+
+position:sticky;
+
+top:0;
+
+background:#0d1b2d;
+
+}
+
+.proj{
+
+font-weight:900;
+
+color:#8fc8ff;
+
+}
+
+.scanner{
+
+display:grid;
+
+grid-template-columns:
+1fr
+140px
+120px
+120px
+140px
+auto;
+
+gap:8px;
+
+align-items:end;
+
+margin-top:12px;
+
+}
+
+.result{
+
+margin-top:14px;
+
+padding:14px;
+
+border-radius:12px;
+
+background:#091728;
+
+border:
+1px solid var(--line);
+
+}
+
+.result strong{
+
+font-size:20px;
+
+}
+
+.green{
+
+color:#72e7b5;
+
+}
+
+.red{
+
+color:#ff7e91;
+
+}
+
+.yellow{
+
+color:#ffd96d;
+
+}
+
+.small{
+
+font-size:12px;
+
+color:var(--muted);
+
+}
+
+.kpis{
+
+display:grid;
+
+grid-template-columns:
+repeat(4,1fr);
+
+gap:8px;
+
+margin-top:12px;
+
+}
+
+.kpi{
+
+background:#11243a;
+
+padding:12px;
+
+border-radius:10px;
+
+border:
+1px solid var(--line);
+
+}
+
+.kpi-value{
+
+font-size:20px;
+
+font-weight:900;
+
+}
+
+@media(max-width:850px){
+
+.controls{
+
+grid-template-columns:
+1fr 1fr;
+
+}
+
+.teams-grid{
+
+grid-template-columns:
+1fr;
+
+}
+
+.scanner{
+
+grid-template-columns:
+1fr 1fr;
+
+}
+
+.kpis{
+
+grid-template-columns:
+1fr 1fr;
+
+}
+
+}
+
+@media(max-width:520px){
+
+.wrap{
+
+padding:12px;
+
+}
+
+.controls{
+
+grid-template-columns:
+1fr;
+
+}
+
+.matches{
+
+grid-template-columns:
+1fr;
+
+}
+
+.player-list{
+
+grid-template-columns:
+1fr;
+
+}
+
+.scanner{
+
+grid-template-columns:
+1fr;
+
+}
+
+.kpis{
+
+grid-template-columns:
+1fr;
+
+}
+
+}
+
 </style>
+
 </head>
+
 <body>
 
-<div class="header">
-  <h1>⚽ FÚTBOL ANALYTICS</h1>
-  <p>Player Market Scanner • Motor Estadístico V1.3</p>
+<div class="wrap">
+
+<header>
+
+<div>
+
+<h1>
+⚽ Fútbol Analytics
+</h1>
+
+<div class="subtitle">
+
+Player Market Scanner ·
+selección de partido ·
+alineaciones
+
 </div>
 
-<div class="dashboard">
-  <div class="stat-card"><div class="stat-title">Partidos</div><div id="total-partidos" class="stat-value">—</div></div>
-  <div class="stat-card"><div class="stat-title">Bankroll</div><div id="bankroll" class="stat-value">$0</div></div>
-  <div class="stat-card"><div class="stat-title">Stake recomendado</div><div id="stake" class="stat-value">2%</div></div>
-  <div class="stat-card"><div class="stat-title">Motor FA</div><div class="stat-value">V1.3</div></div>
 </div>
 
-<div class="contenedor">
+<div
+id="apiBadge"
+class="badge"
+>
 
-<section id="player-market-scanner">
-  <div class="scanner-main-title">
-    <div class="title">🎯 PLAYER MARKET SCANNER</div>
-    <div class="subtitle">Fútbol Analytics V1.3 • Motor de Valor Estadístico</div>
-  </div>
+Conectando API…
 
-  <div class="scanner-top-grid">
-    <div class="scanner-box"><div class="scanner-label">JUGADOR</div><div class="scanner-value-text" id="scanner-jugador">Esperando análisis...</div></div>
-    <div class="scanner-box"><div class="scanner-label">MERCADO</div><div class="scanner-market-text" id="scanner-mercado">Remates</div></div>
-    <div class="scanner-box"><div class="scanner-label">LÍNEA</div><div class="scanner-value-text" id="scanner-linea">—</div></div>
-  </div>
+</div>
 
-  <div class="scanner-metrics">
-    <div class="scanner-metric"><div class="scanner-label">FA RATING</div><div id="scanner-rating" class="scanner-metric-value">—</div><div class="scanner-unit">/ 100</div></div>
-    <div class="scanner-metric"><div class="scanner-label">PROBABILIDAD FA</div><div id="scanner-probabilidad" class="scanner-metric-value probabilidad">—</div></div>
-    <div class="scanner-metric"><div class="scanner-label">CUOTA</div><div id="scanner-cuota" class="scanner-metric-value cuota">—</div></div>
-    <div class="scanner-metric"><div class="scanner-label">VALUE EDGE</div><div id="scanner-value" class="scanner-metric-value value-edge">—</div></div>
-  </div>
+</header>
 
-  <div class="scanner-signal">
-    <div class="scanner-signal-title">SEÑAL DEL MOTOR FA</div>
-    <div id="scanner-senal" class="scanner-signal-value">ESPERANDO DATOS</div>
-  </div>
-  <div class="scanner-disclaimer">Las métricas FA son herramientas estadísticas y no garantizan resultados.</div>
+
+<!-- ======================================================
+     SELECCIÓN DE PARTIDO
+======================================================= -->
+
+<section class="panel">
+
+<h2>
+1. Escoger partido
+</h2>
+
+<div class="controls">
+
+<div>
+
+<label for="date">
+Fecha
+</label>
+
+<input
+id="date"
+type="date"
+>
+
+</div>
+
+
+<div>
+
+<label for="filter">
+Buscar equipo / liga
+</label>
+
+<input
+id="filter"
+type="text"
+placeholder="Ej. Barcelona, Liverpool, Premier"
+>
+
+</div>
+
+
+<button
+id="loadBtn"
+class="secondary"
+>
+
+Cargar partidos
+
+</button>
+
+
+<button
+id="todayBtn"
+class="ghost"
+>
+
+Hoy
+
+</button>
+
+</div>
+
+
+<div
+id="matches"
+class="matches"
+>
+
+<div class="empty">
+
+Cargando partidos…
+
+</div>
+
+</div>
+
 </section>
 
-<div class="section-title">🔥 Top oportunidades de jugadores</div>
-<div class="toolbar">
-  <button class="filter-btn active" data-market="TODOS">Todos</button>
-  <button class="filter-btn" data-market="Remates">Remates</button>
-  <button class="filter-btn" data-market="Remates a puerta">Remates a puerta</button>
-  <button class="filter-btn" data-market="Goles">Goles</button>
-  <button class="filter-btn" data-market="Asistencias">Asistencias</button>
-</div>
-<div id="market-status" class="status-note">Conectando con el motor de mercados...</div>
-<div class="market-table-wrap">
-<table class="market-table">
-<thead><tr><th>Jugador</th><th>Equipo</th><th>Mercado</th><th>Línea</th><th>Prob. FA</th><th>Cuota</th><th>Value Edge</th><th>FA Rating</th><th>Señal</th></tr></thead>
-<tbody id="market-body"><tr><td colspan="9" class="loading">Cargando oportunidades...</td></tr></tbody>
-</table>
+
+<!-- ======================================================
+     ANÁLISIS
+======================================================= -->
+
+<section
+id="analysisPanel"
+class="panel"
+hidden
+>
+
+<div class="fixture-head">
+
+<div>
+
+<div class="small">
+PARTIDO SELECCIONADO
 </div>
 
-<div class="section-title">🔎 Partidos disponibles</div>
-<div id="lista-partidos"><div class="loading">⚽ Cargando datos reales...</div></div>
+<div
+id="fixtureTitle"
+class="fixture-title"
+>
 
-<div class="info">
-  Los partidos proceden del backend de Fútbol Analytics.
-  <br><br>
-  El módulo de jugadores está preparado para recibir estadísticas reales de jugadores y cuotas de mercado.
-  El sistema no debe presentar datos simulados como datos reales.
+—
+
+</div>
+
+<div
+id="fixtureMeta"
+class="small"
+>
+
+—
+
 </div>
 
 </div>
+
+
+<div
+id="lineupBadge"
+class="lineup-state"
+>
+
+Comprobando alineaciones…
+
+</div>
+
+</div>
+
+
+<div
+id="lineups"
+>
+
+</div>
+
+
+<div style="margin-top:20px">
+
+<h2>
+2. Player Market Scanner
+</h2>
+
+<div class="small">
+
+Las proyecciones son prepartido
+y se basan en estadísticas de temporada
++ minutos esperados.
+
+</div>
+
+</div>
+
+
+<div
+id="playersTable"
+class="table-wrap"
+>
+
+</div>
+
+
+<!-- ======================================================
+     SCANNER
+======================================================= -->
+
+<div
+class="panel"
+style="margin-top:18px;background:#091728"
+>
+
+<h3>
+3. Evaluar una línea
+</h3>
+
+
+<div class="scanner">
+
+
+<div>
+
+<label>
+Jugador
+</label>
+
+<select
+id="scanPlayer"
+>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Mercado
+</label>
+
+<select
+id="scanMarket"
+>
+
+<option>
+Remates
+</option>
+
+<option>
+Remates a puerta
+</option>
+
+<option>
+Goles
+</option>
+
+<option>
+Asistencias
+</option>
+
+<option>
+Faltas
+</option>
+
+<option>
+Tarjetas
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Over/Under
+</label>
+
+<select
+id="scanSide"
+>
+
+<option value="over">
+Over
+</option>
+
+<option value="under">
+Under
+</option>
+
+</select>
+
+</div>
+
+
+<div>
+
+<label>
+Línea
+</label>
+
+<input
+id="scanLine"
+type="number"
+min="0.1"
+step="0.1"
+placeholder="1.5"
+>
+
+</div>
+
+
+<div>
+
+<label>
+Cuota
+</label>
+
+<input
+id="scanOdds"
+type="number"
+min="1.01"
+step="0.01"
+placeholder="1.80"
+>
+
+</div>
+
+
+<button
+id="scanBtn"
+>
+
+Analizar
+
+</button>
+
+</div>
+
+
+<div
+id="scanResult"
+class="result"
+hidden
+>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
 
 <script>
-const API_BASE="https://stats-backend-jpd3.onrender.com";
-const API_PARTIDOS=`${API_BASE}/api/partidos-hoy`;
-const API_MARKET=`${API_BASE}/api/player-market`;
-const API_MARKETS=`${API_BASE}/api/player-markets`;
 
-let allMarkets=[];
-let currentFilter="TODOS";
+const API_BASE =
+"https://stats-backend-jpd3.onrender.com";
 
-function escaparHTML(valor){
-  return String(valor??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+const dateInput =
+document.getElementById("date");
+
+const matchesEl =
+document.getElementById("matches");
+
+const apiBadge =
+document.getElementById("apiBadge");
+
+const analysisPanel =
+document.getElementById("analysisPanel");
+
+const filterInput =
+document.getElementById("filter");
+
+const loadBtn =
+document.getElementById("loadBtn");
+
+const todayBtn =
+document.getElementById("todayBtn");
+
+const lineupBadge =
+document.getElementById("lineupBadge");
+
+const lineupsEl =
+document.getElementById("lineups");
+
+const playersTable =
+document.getElementById("playersTable");
+
+const scanPlayer =
+document.getElementById("scanPlayer");
+
+const scanMarket =
+document.getElementById("scanMarket");
+
+const scanSide =
+document.getElementById("scanSide");
+
+const scanLine =
+document.getElementById("scanLine");
+
+const scanOdds =
+document.getElementById("scanOdds");
+
+const scanBtn =
+document.getElementById("scanBtn");
+
+const scanResult =
+document.getElementById("scanResult");
+
+
+let fixtures = [];
+
+let selectedFixture = null;
+
+let analysis = null;
+
+
+function localDateISO(){
+
+const d =
+new Date();
+
+const offset =
+d.getTimezoneOffset();
+
+return new Date(
+d.getTime()
+-
+offset * 60000
+)
+.toISOString()
+.slice(0,10);
+
 }
-function num(valor){
-  const n=Number(valor);
-  return Number.isFinite(n)?n:null;
+
+
+dateInput.value =
+localDateISO();
+
+
+async function api(
+path,
+options={}
+){
+
+const response =
+await fetch(
+API_BASE + path,
+options
+);
+
+const data =
+await response.json();
+
+if(!response.ok){
+
+throw new Error(
+data.detail ||
+data.message ||
+"Error API"
+);
+
 }
-function prob(valor){
-  const n=num(valor);
-  if(n===null) return valor==="—"?"—":String(valor??"—");
-  const x=n>0&&n<1?n*100:n;
-  return `${x%1===0?x.toFixed(0):x.toFixed(1)}%`;
+
+return data;
+
 }
-function edge(valor){
-  const n=num(valor);
-  return n===null?"—":n.toFixed(2);
+
+
+async function testAPI(){
+
+try{
+
+const data =
+await api(
+"/api/test-apifootball"
+);
+
+if(
+data.status ===
+"connected"
+){
+
+apiBadge.textContent =
+"API conectada";
+
+apiBadge.style.background =
+"#123a31";
+
+apiBadge.style.color =
+"#72e7b5";
+
+}else{
+
+throw new Error(
+data.message ||
+"API no conectada"
+);
+
 }
-function signalClass(v){
-  const s=String(v||"").toUpperCase();
-  if(s.includes("ALTA")||s.includes("OPORTUNIDAD")) return "alta";
-  if(s.includes("MEDIA")) return "media";
-  return "baja";
+
+}catch(err){
+
+apiBadge.textContent =
+"API: revisar";
+
+apiBadge.style.background =
+"#3c171e";
+
+apiBadge.style.color =
+"#ff9aaa";
+
+console.error(err);
+
 }
-function normalizeMarket(m){
-  return {
-    jugador:m.jugador??m.player??m.name??"Jugador",
-    equipo:m.equipo??m.team??m.teamName??"",
-    mercado:m.mercado??m.market??"Remates",
-    linea:m.linea??m.line??"—",
-    probabilidad:m.probabilidad_fa??m.probabilidad??m.probability??"—",
-    cuota:m.cuota??m.odds??"—",
-    valueEdge:m.value_edge??m.valueEdge??"—",
-    rating:m.fa_rating??m.faRating??m.rating??"—",
-    señal:m.señal??m.signal??"SIN SEÑAL"
-  };
+
 }
-function actualizarScanner(data){
-  document.getElementById("scanner-jugador").textContent=data.jugador??"Sin datos";
-  document.getElementById("scanner-mercado").textContent=data.mercado??"Remates";
-  document.getElementById("scanner-linea").textContent=data.linea??"—";
-  document.getElementById("scanner-rating").textContent=data.rating??"—";
-  document.getElementById("scanner-probabilidad").textContent=prob(data.probabilidad);
-  document.getElementById("scanner-cuota").textContent=data.cuota??"—";
-  document.getElementById("scanner-value").textContent=edge(data.valueEdge);
-  document.getElementById("scanner-senal").textContent=data.señal??"ESPERANDO DATOS";
+
+
+function formatDate(
+iso
+){
+
+if(!iso){
+
+return "Fecha no disponible";
+
 }
-function renderMarkets(){
-  const body=document.getElementById("market-body");
-  const filtered=currentFilter==="TODOS"?allMarkets:allMarkets.filter(x=>String(x.mercado).toLowerCase()===currentFilter.toLowerCase());
-  if(!filtered.length){
-    body.innerHTML='<tr><td colspan="9" class="loading">No hay mercados disponibles para este filtro.</td></tr>';
-    return;
-  }
-  body.innerHTML=filtered.sort((a,b)=>(num(b.rating)||0)-(num(a.rating)||0)).map(m=>`
-    <tr>
-      <td><strong>${escaparHTML(m.jugador)}</strong></td>
-      <td>${escaparHTML(m.equipo)}</td>
-      <td>${escaparHTML(m.mercado)}</td>
-      <td>${escaparHTML(m.linea)}</td>
-      <td>${escaparHTML(prob(m.probabilidad))}</td>
-      <td>${escaparHTML(m.cuota)}</td>
-      <td class="edge">${escaparHTML(edge(m.valueEdge))}</td>
-      <td class="rating">${escaparHTML(m.rating)}/100</td>
-      <td class="signal ${signalClass(m.señal)}">${escaparHTML(m.señal)}</td>
-    </tr>`).join("");
+
+const d =
+new Date(iso);
+
+return d.toLocaleString(
+"es-CO",
+{
+
+day:"2-digit",
+
+month:"2-digit",
+
+year:"numeric",
+
+hour:"2-digit",
+
+minute:"2-digit"
+
 }
-async function cargarMarket(){
-  const status=document.getElementById("market-status");
-  try{
-    const r=await fetch(API_MARKETS,{cache:"no-store"});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const data=await r.json();
-    const arr=Array.isArray(data)?data:(data.markets??data.mercados??data.players??[]);
-    allMarkets=arr.map(normalizeMarket);
-    if(allMarkets.length){
-      actualizarScanner(allMarkets[0]);
-      status.textContent=`Motor conectado: ${allMarkets.length} oportunidades recibidas.`;
-      renderMarkets();
-      return;
-    }
-    throw new Error("Sin mercados");
-  }catch(e){
-    // Compatibilidad con el endpoint demo actual.
-    try{
-      const r=await fetch(API_MARKET,{cache:"no-store"});
-      if(!r.ok) throw new Error("HTTP "+r.status);
-      const data=normalizeMarket(await r.json());
-      allMarkets=[data];
-      actualizarScanner(data);
-      renderMarkets();
-      status.textContent="⚠️ Endpoint de mercados múltiples aún no está disponible. Se muestra el mercado demo actual; no se considera un pick real.";
-    }catch(err){
-      allMarkets=[];
-      actualizarScanner({jugador:"Sin datos",mercado:"—",linea:"—",rating:"—",probabilidad:"—",cuota:"—",valueEdge:"—",señal:"SIN CONEXIÓN"});
-      renderMarkets();
-      status.textContent="❌ No se pudo conectar al módulo de mercados.";
-    }
-  }
+
+);
+
 }
-function estadoES(estado){
-  const s=String(estado||"").toUpperCase();
-  return {FINISHED:"FINALIZADO",IN_PLAY:"EN VIVO",PAUSED:"DESCANSO",TIMED:"PROGRAMADO",SCHEDULED:"PROGRAMADO",POSTPONED:"APLAZADO",CANCELLED:"CANCELADO"}[s]||s;
+
+
+function escapeHtml(
+value
+){
+
+return String(
+value ?? ""
+)
+.replace(
+/[&<>"']/g,
+c => ({
+
+"&":"&amp;",
+
+"<":"&lt;",
+
+">":"&gt;",
+
+'"':"&quot;",
+
+"'":"&#039;"
+
+}[c])
+);
+
 }
-function nombreEquipo(v,fallback){
-  if(v&&typeof v==="object") return v.name??fallback;
-  return v??fallback;
+
+
+function renderFixtures(){
+
+const q =
+filterInput.value
+.trim()
+.toLowerCase();
+
+
+const filtered =
+fixtures.filter(
+f => {
+
+const text = [
+
+f.home?.name,
+
+f.away?.name,
+
+f.league?.name,
+
+f.league?.country
+
+]
+.filter(Boolean)
+.join(" ")
+.toLowerCase();
+
+
+return text.includes(q);
+
 }
-async function cargarPartidos(){
-  const contenedor=document.getElementById("lista-partidos");
-  try{
-    const r=await fetch(API_PARTIDOS,{cache:"no-store"});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const data=await r.json();
-    const partidos=Array.isArray(data)?data:(data.matches??data.partidos??[]);
-    document.getElementById("total-partidos").textContent=partidos.length;
-    if(!partidos.length){contenedor.innerHTML='<div class="loading">No hay partidos programados para el periodo consultado.</div>';return;}
-    contenedor.innerHTML="";
-    partidos.forEach(p=>{
-      const local=nombreEquipo(p.homeTeam??p.local??p.home,"Local");
-      const visitante=nombreEquipo(p.awayTeam??p.visitante??p.away,"Visitante");
-      const comp=typeof p.competition==="object"?p.competition.name:(p.competition??p.competicion??"Competición");
-      const score=p.score&&typeof p.score==="object"?p.score:p;
-      const gl=score.home??p.goles_local??p.homeGoals;
-      const ga=score.away??p.goles_visitante??p.awayGoals;
-      const estado=estadoES(p.status??p.estado);
-      const marcador=(gl!==undefined&&gl!==null&&ga!==undefined&&ga!==null)?`${gl} - ${ga}`:"VS";
-      const fecha=p.utcDate?new Date(p.utcDate).toLocaleString("es-CO",{dateStyle:"short",timeStyle:"short"}):"";
-      const ivj=p.ivjIndex??p.ivj_index??"—";
-      const card=document.createElement("div");
-      card.className="card-partido";
-      card.innerHTML=`
-        <div class="card-header"><span class="competicion">${escaparHTML(comp)}</span><span class="estado">${escaparHTML(estado)}</span></div>
-        <div class="marcador-container">
-          <span class="equipo local">${escaparHTML(local)}</span>
-          <span class="resultado">${escaparHTML(marcador)}</span>
-          <span class="equipo visitante">${escaparHTML(visitante)}</span>
-        </div>
-        <div class="match-meta">${escaparHTML(fecha)}</div>
-        <div class="match-ivj"><span class="ivj">IVJ partido: ${escaparHTML(ivj)}</span></div>`;
-      contenedor.appendChild(card);
-    });
-  }catch(e){
-    document.getElementById("total-partidos").textContent="0";
-    contenedor.innerHTML='<div class="error">No se pudieron cargar los partidos. Revisa la conexión con el backend.</div>';
-  }
+);
+
+
+if(!filtered.length){
+
+matchesEl.innerHTML =
+'<div class="empty">No hay partidos para ese filtro.</div>';
+
+return;
+
 }
-document.querySelectorAll(".filter-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-    currentFilter=btn.dataset.market;
-    renderMarkets();
-  });
-});
-document.addEventListener("DOMContentLoaded",()=>{cargarMarket();cargarPartidos();});
+
+
+matchesEl.innerHTML =
+filtered.map(
+f => `
+
+<div
+class="match ${
+selectedFixture?.fixture_id ===
+f.fixture_id
+? "selected"
+: ""
+}"
+data-id="${f.fixture_id}"
+>
+
+<div class="league">
+
+${escapeHtml(
+f.league?.name ||
+"Competición"
+)}
+
+·
+
+${escapeHtml(
+f.league?.country ||
+""
+)}
+
+</div>
+
+
+<div class="teams">
+
+${escapeHtml(
+f.home?.name ||
+"Local"
+)}
+
+<br>
+
+vs
+
+<br>
+
+${escapeHtml(
+f.away?.name ||
+"Visitante"
+)}
+
+</div>
+
+
+<div class="date">
+
+${formatDate(f.date)}
+
+</div>
+
+
+<div class="status">
+
+${escapeHtml(
+f.status?.long ||
+f.status?.short ||
+""
+)}
+
+</div>
+
+</div>
+
+`
+).join("");
+
+
+matchesEl
+.querySelectorAll(
+".match"
+)
+.forEach(
+card => {
+
+card.addEventListener(
+"click",
+() => {
+
+const id =
+Number(
+card.dataset.id
+);
+
+selectedFixture =
+fixtures.find(
+f =>
+f.fixture_id === id
+)
+|| null;
+
+renderFixtures();
+
+loadAnalysis(id);
+
+}
+);
+
+}
+);
+
+}
+
+
+async function loadFixtures(){
+
+matchesEl.innerHTML =
+'<div class="empty">Consultando partidos…</div>';
+
+
+try{
+
+const data =
+await api(
+"/api/apifootball-fixtures?date="
++
+encodeURIComponent(
+dateInput.value
+)
+);
+
+fixtures =
+data.fixtures || [];
+
+selectedFixture =
+null;
+
+analysisPanel.hidden =
+true;
+
+renderFixtures();
+
+}catch(err){
+
+matchesEl.innerHTML =
+`
+
+<div class="empty">
+
+Error:
+
+${escapeHtml(
+err.message
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+function renderLineups(
+data
+){
+
+if(
+!data.lineups?.length
+){
+
+lineupsEl.innerHTML =
+"";
+
+return;
+
+}
+
+
+lineupsEl.innerHTML = `
+
+<div class="teams-grid">
+
+${data.lineups.map(
+team => `
+
+<div class="team-card">
+
+<div class="team-name">
+
+${escapeHtml(
+team.team?.name ||
+"Equipo"
+)}
+
+${
+team.formation
+?
+" · "
++
+escapeHtml(
+team.formation
+)
+:
+""
+}
+
+</div>
+
+
+<div
+class="small"
+style="margin-bottom:8px"
+>
+
+Titulares confirmados:
+
+${team.starter_count}
+
+</div>
+
+
+<div class="player-list">
+
+${
+(team.starters || [])
+.map(
+p => `
+
+<div class="player-chip">
+
+<span class="starter">
+●
+</span>
+
+${escapeHtml(
+p.name
+)}
+
+<span class="small">
+
+${escapeHtml(
+p.position || ""
+)}
+
+</span>
+
+</div>
+
+`
+)
+.join("")
+}
+
+</div>
+
+</div>
+
+`
+).join("")}
+
+</div>
+
+`;
+
+}
+
+
+function renderPlayers(
+players
+){
+
+const starters =
+players.filter(
+p => p.starter
+);
+
+const subs =
+players.filter(
+p => !p.starter
+);
+
+const ordered =
+[
+...starters,
+...subs
+];
+
+
+playersTable.innerHTML = `
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>
+Jugador
+</th>
+
+<th>
+Equipo
+</th>
+
+<th>
+Rol
+</th>
+
+<th>
+Pos.
+</th>
+
+<th>
+Min. esp.
+</th>
+
+<th>
+Remates/90
+</th>
+
+<th>
+RAP/90
+</th>
+
+<th>
+Goles/90
+</th>
+
+<th>
+Asist./90
+</th>
+
+<th>
+Faltas/90
+</th>
+
+<th>
+Tarj./90
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+${ordered.map(
+p => `
+
+<tr>
+
+<td>
+
+<strong>
+
+${escapeHtml(
+p.player
+)}
+
+</strong>
+
+</td>
+
+
+<td>
+
+${escapeHtml(
+p.team
+)}
+
+</td>
+
+
+<td
+class="${
+p.starter
+?
+"starter"
+:
+"sub"
+}"
+>
+
+${
+p.starter
+?
+"TITULAR"
+:
+"SUPLENTE"
+}
+
+</td>
+
+
+<td>
+
+${escapeHtml(
+p.position || ""
+)}
+
+</td>
+
+
+<td>
+
+${p.expected_minutes}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Remates"]
+??
+0
+}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Remates a puerta"]
+??
+0
+}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Goles"]
+??
+0
+}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Asistencias"]
+??
+0
+}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Faltas"]
+??
+0
+}
+
+</td>
+
+
+<td class="proj">
+
+${
+p.projection?.["Tarjetas"]
+??
+0
+}
+
+</td>
+
+</tr>
+
+`
+).join("")}
+
+</tbody>
+
+</table>
+
+`;
+
+
+scanPlayer.innerHTML =
+ordered.map(
+p =>
+
+`
+
+<option
+value="${p.player_id}"
+>
+
+${escapeHtml(
+p.player
+)}
+
+·
+
+${
+p.starter
+?
+"Titular"
+:
+"Suplente"
+}
+
+</option>
+
+`
+)
+.join("");
+
+}
+
+
+async function loadAnalysis(
+fixtureId
+){
+
+analysisPanel.hidden =
+false;
+
+
+document.getElementById(
+"fixtureTitle"
+).textContent =
+
+`
+
+${
+selectedFixture?.home?.name
+||
+"Local"
+}
+
+vs
+
+${
+selectedFixture?.away?.name
+||
+"Visitante"
+}
+
+`;
+
+
+document.getElementById(
+"fixtureMeta"
+).textContent =
+
+`
+
+${
+selectedFixture?.league?.name
+||
+""
+}
+
+·
+
+${
+formatDate(
+selectedFixture?.date
+)
+}
+
+`;
+
+
+lineupBadge.textContent =
+"Consultando alineaciones…";
+
+lineupBadge.className =
+"lineup-state";
+
+
+lineupsEl.innerHTML =
+"";
+
+
+playersTable.innerHTML =
+'<div class="empty">Analizando partido…</div>';
+
+
+scanResult.hidden =
+true;
+
+
+try{
+
+const data =
+await api(
+"/api/fixture-analysis?fixture_id="
++
+fixtureId
+);
+
+analysis =
+data;
+
+
+if(!data.available){
+
+lineupBadge.textContent =
+"Alineaciones aún no disponibles";
+
+lineupBadge.className =
+"lineup-state";
+
+
+playersTable.innerHTML = `
+
+<div class="empty">
+
+${escapeHtml(
+data.message ||
+"Sin datos."
+)}
+
+<br><br>
+
+<button
+id="retryBtn"
+class="secondary"
+style="max-width:220px"
+>
+
+Volver a comprobar
+
+</button>
+
+</div>
+
+`;
+
+
+document
+.getElementById(
+"retryBtn"
+)
+.addEventListener(
+"click",
+() =>
+loadAnalysis(
+fixtureId
+)
+);
+
+return;
+
+}
+
+
+lineupBadge.textContent =
+"✓ Alineaciones confirmadas";
+
+lineupBadge.className =
+"lineup-state ok";
+
+
+const lineupData =
+await api(
+"/api/fixture-lineups?fixture_id="
++
+fixtureId
+);
+
+
+renderLineups(
+lineupData
+);
+
+
+renderPlayers(
+data.players || []
+);
+
+
+}catch(err){
+
+lineupBadge.textContent =
+"Error";
+
+
+playersTable.innerHTML = `
+
+<div class="empty">
+
+${escapeHtml(
+err.message
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+function getSelectedPlayer(){
+
+if(!analysis?.players){
+
+return null;
+
+}
+
+return analysis.players.find(
+p =>
+String(
+p.player_id
+)
+===
+String(
+scanPlayer.value
+)
+);
+
+}
+
+
+scanMarket.addEventListener(
+"change",
+() => {
+
+const p =
+getSelectedPlayer();
+
+if(!p)
+return;
+
+const projection =
+p.projection?.[
+scanMarket.value
+];
+
+if(
+typeof projection ===
+"number"
+){
+
+scanLine.placeholder =
+projection >= 0.8
+?
+"Ej. 1.5"
+:
+"Ej. 0.5";
+
+}
+
+}
+);
+
+
+scanBtn.addEventListener(
+"click",
+async () => {
+
+const p =
+getSelectedPlayer();
+
+const line =
+Number(
+scanLine.value
+);
+
+const odds =
+Number(
+scanOdds.value
+);
+
+
+if(!p){
+
+scanResult.hidden =
+false;
+
+scanResult.innerHTML =
+'<span class="red">Selecciona un jugador.</span>';
+
+return;
+
+}
+
+
+if(
+!(line > 0)
+||
+!(odds > 1)
+){
+
+scanResult.hidden =
+false;
+
+scanResult.innerHTML =
+'<span class="yellow">Introduce una línea y una cuota válidas.</span>';
+
+return;
+
+}
+
+
+const projection =
+Number(
+p.projection?.[
+scanMarket.value
+]
+||
+0
+);
+
+
+scanResult.hidden =
+false;
+
+scanResult.innerHTML =
+"Calculando…";
+
+
+try{
+
+const result =
+await api(
+"/api/scanner-projection",
+{
+
+method:
+"POST",
+
+headers:
+{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify({
+
+player:
+p.player,
+
+market:
+scanMarket.value,
+
+side:
+scanSide.value,
+
+line:
+line,
+
+odds:
+odds,
+
+projection:
+projection,
+
+bankroll:
+0,
+
+stake_percent:
+2,
+
+confidence:
+p.starter
+?
+78
+:
+55
+
+})
+
+}
+);
+
+
+const cls =
+result.value_positive
+?
+"green"
+:
+"red";
+
+
+scanResult.innerHTML = `
+
+<div class="${cls}">
+
+<strong>
+
+${escapeHtml(
+result.signal
+)}
+
+</strong>
+
+</div>
+
+
+<div style="margin-top:8px">
+
+<b>
+
+${escapeHtml(
+result.player
+)}
+
+</b>
+
+·
+
+${escapeHtml(
+result.market
+)}
+
+${escapeHtml(
+result.side
+)}
+
+${result.line}
+
+· cuota
+
+${result.odds}
+
+</div>
+
+
+<div
+style="
+margin-top:8px;
+display:grid;
+grid-template-columns:
+repeat(4,1fr);
+gap:8px
+"
+>
+
+<div>
+
+<span class="small">
+Proyección
+</span>
+
+<br>
+
+<b>
+${result.projection}
+</b>
+
+</div>
+
+
+<div>
+
+<span class="small">
+Prob. FA
+</span>
+
+<br>
+
+<b>
+${result.probability_fa}%
+</b>
+
+</div>
+
+
+<div>
+
+<span class="small">
+Value Edge
+</span>
+
+<br>
+
+<b>
+${result.value_edge}%
+</b>
+
+</div>
+
+
+<div>
+
+<span class="small">
+FA Rating
+</span>
+
+<br>
+
+<b>
+${result.fa_rating}/100
+</b>
+
+</div>
+
+</div>
+
+
+<div
+class="small"
+style="margin-top:10px"
+>
+
+Riesgo:
+${result.risk}.
+
+Las cuotas deben verificarse
+en el bookmaker antes de publicar.
+
+</div>
+
+`;
+
+}catch(err){
+
+scanResult.innerHTML =
+`
+
+<span class="red">
+
+${escapeHtml(
+err.message
+)}
+
+</span>
+
+`;
+
+}
+
+}
+);
+
+
+loadBtn.addEventListener(
+"click",
+loadFixtures
+);
+
+
+todayBtn.addEventListener(
+"click",
+() => {
+
+dateInput.value =
+localDateISO();
+
+loadFixtures();
+
+}
+);
+
+
+filterInput.addEventListener(
+"input",
+renderFixtures
+);
+
+
+testAPI();
+
+loadFixtures();
+
 </script>
+
 </body>
+
 </html>
