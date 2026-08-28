@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fútbol Analytics V1.8</title>
+<title>Fútbol Analytics V1.9</title>
 <style>
 :root{
   --bg:#030a14;--bg2:#071525;--panel:#07182a;--panel2:#0a2138;
@@ -103,6 +103,21 @@ footer{text-align:center;color:#6f8ba0;font-size:10px;padding:14px}
 @media(max-width:1100px){.grid-main{grid-template-columns:1fr}.matches{max-height:none}.context-grid{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:850px){.controls{grid-template-columns:1fr 1fr}.opps{grid-template-columns:1fr}.teams-grid{grid-template-columns:1fr}.scanner{grid-template-columns:1fr 1fr}.bankroll-grid,.recent-grid{grid-template-columns:1fr 1fr}.context-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.wrap{padding:10px}.controls,.scanner,.bankroll-grid,.recent-grid,.context-grid{grid-template-columns:1fr}.nav{display:none}.fixture-title{font-size:21px}.player-list{grid-template-columns:1fr}.smart-tools{grid-template-columns:1fr}.logo{width:48px;height:48px;font-size:25px}}
+
+.opps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.opp{background:linear-gradient(145deg,#061a2a,#04111f);border:1px solid #17445f;border-radius:12px;padding:12px;position:relative;overflow:hidden}
+.opp.high{border-color:#3d8f27;box-shadow:0 0 18px rgba(124,255,0,.07)}
+.opp.medium{border-color:#6a5a19}
+.opp-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.opp-rank{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#0b3042;color:#8eeaff;font-weight:950}
+.opp-signal{font-size:9px;font-weight:950;padding:5px 7px;border-radius:999px;border:1px solid #246c39;color:var(--green);background:#0b2418}
+.opp-signal.medium{color:#ffe06d;border-color:#66531a;background:#2d260b}
+.opp-title{font-size:15px;font-weight:950;margin-top:9px}.opp-market{color:#7ccfff;font-size:11px;margin-top:2px}
+.opp-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}
+.opp-kpi{background:#071a2a;border:1px solid #113b54;border-radius:8px;padding:7px}.opp-kpi span{display:block;color:#7897ad;font-size:9px}.opp-kpi b{font-size:15px}
+.opp-footer{margin-top:9px;color:#8da8ba;font-size:9px;line-height:1.4}
+.data-badge{display:inline-block;margin-top:6px;padding:4px 7px;border-radius:999px;background:#062f25;color:#72ffc0;border:1px solid #176d50;font-size:9px;font-weight:900}
+
 </style>
 </head>
 <body>
@@ -185,7 +200,7 @@ footer{text-align:center;color:#6f8ba0;font-size:10px;padding:14px}
     </section>
 
     <section class="panel" id="contexto">
-      <div class="section-title"><div><div class="eyebrow">MODELO DE CONTEXTO</div><h2>ANÁLISIS MÁS ALLÁ DEL PROMEDIO</h2></div><span class="small">V1.8 · estructura preparada para ampliar el motor</span></div>
+      <div class="section-title"><div><div class="eyebrow">MODELO DE CONTEXTO</div><h2>ANÁLISIS MÁS ALLÁ DEL PROMEDIO</h2></div><span class="small">V1.9 · contexto + proyección + señales estadísticas</span></div>
       <div class="context-grid">
         <div class="context-card"><div class="context-icon">📋</div><div class="context-title">Alineaciones</div><div class="context-text">Confirmadas antes de aumentar la confianza del análisis.</div></div>
         <div class="context-card"><div class="context-icon">🎯</div><div class="context-title">Posición / rol</div><div class="context-text">Se considera posición, titularidad y función táctica.</div></div>
@@ -208,7 +223,7 @@ footer{text-align:center;color:#6f8ba0;font-size:10px;padding:14px}
   </main>
 </div>
 
-<footer>FÚTBOL ANALYTICS V1.8 · Los datos se actualizan desde las APIs conectadas · Juega responsablemente 18+</footer>
+<footer>FÚTBOL ANALYTICS V1.9 · Los datos se actualizan desde las APIs conectadas · Juega responsablemente 18+</footer>
 </div>
 
 <script>
@@ -317,18 +332,90 @@ function renderLineups(data){
 function num(v){return typeof v==="number"?v:Number(v||0)}
 function projectionFor(p,m){return num(p?.projection?.[m])}
 
+function poissonAtLeast(k,lambda){
+  if(k<=0)return 1;
+  if(lambda<=0)return 0;
+  let term=Math.exp(-lambda),cum=term;
+  for(let x=1;x<k;x++){term*=lambda/x;cum+=term}
+  return Math.max(0,Math.min(1,1-cum));
+}
+function probOver(line,projection){return poissonAtLeast(Math.floor(line)+1,projection)*100}
+function probUnder(line,projection){
+  const target=Math.ceil(line)-1;
+  if(target<0)return 0;
+  return (1-poissonAtLeast(target+1,projection))*100;
+}
+function modelRating(prob,confidence,starter){
+  const role=starter?10:0;
+  return Math.round(Math.max(0,Math.min(100,prob*.62+confidence*.28+role)));
+}
+function candidateConfidence(p){
+  let c=p?.confirmed_lineup?70:45;
+  if(p?.starter)c+=12;
+  if((p?.minutes_season||0)>=450)c+=8;
+  if((p?.appearances_season||0)>=8)c+=5;
+  return Math.min(95,c);
+}
 function renderTopCandidates(players){
-  const starters=players.filter(p=>p.starter),markets=["Remates","Remates a puerta","Goles","Asistencias","Faltas","Tarjetas"],c=[];
-  starters.forEach(p=>markets.forEach(m=>{const v=projectionFor(p,m);if(v>0)c.push({player:p,market:m,value:v})}));
-  c.sort((a,b)=>b.value-a.value);const top=c.slice(0,6);
-  if(!top.length){topCandidates.innerHTML='<div class="empty">No hay proyecciones suficientes para generar candidatos.</div>';return}
-  topCandidates.innerHTML=top.map((x,i)=>`<div class="opp ${i<3?"high":""}"><div class="rank">${i+1}</div><div class="opp-content">
-    <div class="name">${escapeHtml(x.player.player)}</div><div class="market">${escapeHtml(x.market)}</div>
-    <div class="metric"><span>Proyección</span><b class="proj">${x.value.toFixed(2)}</b></div>
-    <div class="metric"><span>Rol</span><b>${x.player.starter?"TITULAR":"SUPLENTE"}</b></div>
-    <div class="metric"><span>Equipo</span><b>${escapeHtml(x.player.team)}</b></div>
-    <div class="quick-note">Candidato estadístico. El valor real solo se calcula con línea y cuota.</div>
-  </div></div>`).join("");
+  const starters=(players||[]).filter(p=>p.starter);
+  const markets=[
+    ["Remates","shots_per90"],
+    ["Remates a puerta","shots_on_target_per90"],
+    ["Goles","goals_per90"],
+    ["Asistencias","assists_per90"],
+    ["Faltas","fouls_committed_per90"],
+    ["Tarjetas","yellow_cards_per90"]
+  ];
+  const candidates=[];
+  starters.forEach(p=>{
+    markets.forEach(([market])=>{
+      const projection=projectionFor(p,market);
+      if(!(projection>0.05))return;
+      // Líneas de referencia del modelo, NO cuotas/líneas de bookmaker.
+      const overLine=Math.max(0.5,Math.floor(projection)+0.5);
+      const underLine=Math.max(0.5,Math.ceil(projection)+0.5);
+      const overProb=probOver(overLine,projection);
+      const underProb=probUnder(underLine,projection);
+      const confidence=candidateConfidence(p);
+      const overRating=modelRating(overProb,confidence,true);
+      const underRating=modelRating(underProb,confidence,true);
+      const best=overProb>=underProb
+        ? {side:"OVER",line:overLine,prob:overProb,rating:overRating}
+        : {side:"UNDER",line:underLine,prob:underProb,rating:underRating};
+      candidates.push({player:p,market,projection,confidence,...best});
+    });
+  });
+  candidates.sort((a,b)=>b.rating-a.rating || b.prob-a.prob);
+  const top=candidates.slice(0,6);
+  if(!top.length){
+    topCandidates.innerHTML='<div class="empty">No hay estadísticas de temporada suficientes para construir proyecciones. La alineación sí está disponible.</div>';
+    return;
+  }
+  topCandidates.innerHTML=top.map((x,i)=>{
+    const strong=x.rating>=80;
+    const medium=x.rating>=70&&!strong;
+    const cls=strong?"high":medium?"medium":"";
+    const sig=strong?"ALTO VALOR MODELO":medium?"VALOR MEDIO":"OBSERVAR";
+    return `<article class="opp ${cls}">
+      <div class="opp-head">
+        <div class="opp-rank">#${i+1}</div>
+        <span class="opp-signal ${medium?'medium':''}">${sig}</span>
+      </div>
+      <div class="opp-title">${escapeHtml(x.player.player)}</div>
+      <div class="opp-market">${escapeHtml(x.player.team)} · ${escapeHtml(x.market)}</div>
+      <div class="opp-grid">
+        <div class="opp-kpi"><span>Proyección</span><b class="proj">${x.projection.toFixed(2)}</b></div>
+        <div class="opp-kpi"><span>Modelo</span><b>${x.side} ${x.line}</b></div>
+        <div class="opp-kpi"><span>Prob. FA</span><b class="${strong?'green':''}">${x.prob.toFixed(1)}%</b></div>
+        <div class="opp-kpi"><span>FA Rating</span><b>${x.rating}/100</b></div>
+      </div>
+      <span class="data-badge">✓ TITULAR CONFIRMADO · ${x.confidence}% CONF.</span>
+      <div class="opp-footer">
+        Línea de referencia matemática. <strong>No es una cuota ni línea de bookmaker.</strong>
+        El Value Edge se calcula cuando introduzcas la cuota real.
+      </div>
+    </article>`;
+  }).join("");
 }
 function renderPlayers(players){
   const ordered=[...players.filter(p=>p.starter),...players.filter(p=>!p.starter)];
