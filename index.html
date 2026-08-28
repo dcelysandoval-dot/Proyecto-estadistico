@@ -1,2376 +1,441 @@
 <!doctype html>
 <html lang="es">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1"
->
-
-<title>Fútbol Analytics V1.6</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fútbol Analytics V1.7</title>
 <style>
-
-:root{
-
---bg:#07111f;
---panel:#0d1b2d;
---panel2:#11243a;
---text:#f4f7fb;
---muted:#9fb0c5;
---line:#243952;
---accent:#19c37d;
---accent2:#2ea3ff;
---danger:#ff647c;
---warn:#ffc857;
-
-}
-
-*{
-box-sizing:border-box;
-}
-
-body{
-
-margin:0;
-
-font-family:
-Inter,
-system-ui,
--apple-system,
-Segoe UI,
-Roboto,
-sans-serif;
-
-background:
-linear-gradient(
-180deg,
-#07111f 0%,
-#0a1524 100%
-);
-
-color:var(--text);
-
-}
-
-.wrap{
-
-max-width:1250px;
-
-margin:0 auto;
-
-padding:22px;
-
-}
-
-header{
-
-display:flex;
-
-justify-content:space-between;
-
-gap:18px;
-
-align-items:center;
-
-margin-bottom:20px;
-
-flex-wrap:wrap;
-
-}
-
-h1{
-
-margin:0;
-
-font-size:28px;
-
-}
-
-h2{
-
-margin-top:0;
-
-}
-
-.subtitle{
-
-color:var(--muted);
-
-margin-top:5px;
-
-}
-
-.badge{
-
-padding:8px 12px;
-
-border-radius:999px;
-
-background:#123a31;
-
-color:#72e7b5;
-
-font-weight:700;
-
-font-size:13px;
-
-}
-
-.panel{
-
-background:
-rgba(13,27,45,.96);
-
-border:
-1px solid var(--line);
-
-border-radius:16px;
-
-padding:18px;
-
-margin-bottom:18px;
-
-}
-
-.controls{
-
-display:grid;
-
-grid-template-columns:
-180px
-1fr
-auto
-auto;
-
-gap:10px;
-
-align-items:end;
-
-}
-
-label{
-
-display:block;
-
-color:var(--muted);
-
-font-size:13px;
-
-margin-bottom:6px;
-
-}
-
-input,
-select,
-button{
-
-width:100%;
-
-min-height:44px;
-
-border-radius:10px;
-
-border:
-1px solid var(--line);
-
-background:#091728;
-
-color:var(--text);
-
-padding:10px 12px;
-
-font-size:14px;
-
-}
-
-button{
-
-cursor:pointer;
-
-background:var(--accent);
-
-color:#06130d;
-
-border:0;
-
-font-weight:800;
-
-}
-
-button.secondary{
-
-background:var(--accent2);
-
-color:white;
-
-}
-
-button.ghost{
-
-background:#172b43;
-
-color:white;
-
-border:
-1px solid var(--line);
-
-}
-
-button:disabled{
-
-opacity:.45;
-
-cursor:not-allowed;
-
-}
-
-.matches{
-
-display:grid;
-
-grid-template-columns:
-repeat(
-auto-fill,
-minmax(300px,1fr)
-);
-
-gap:12px;
-
-margin-top:15px;
-
-}
-
-.match{
-
-background:var(--panel2);
-
-border:
-1px solid var(--line);
-
-border-radius:14px;
-
-padding:15px;
-
-cursor:pointer;
-
-transition:.15s;
-
-}
-
-.match:hover,
-.match.selected{
-
-border-color:
-var(--accent2);
-
-transform:
-translateY(-1px);
-
-}
-
-.league{
-
-font-size:12px;
-
-color:var(--muted);
-
-margin-bottom:10px;
-
-}
-
-.teams{
-
-font-size:17px;
-
-font-weight:800;
-
-line-height:1.45;
-
-}
-
-.date{
-
-font-size:12px;
-
-color:var(--muted);
-
-margin-top:9px;
-
-}
-
-.status{
-
-font-size:12px;
-
-margin-top:10px;
-
-color:#8fc8ff;
-
-}
-
-.empty{
-
-color:var(--muted);
-
-padding:20px;
-
-text-align:center;
-
-}
-
-.fixture-head{
-
-display:flex;
-
-justify-content:space-between;
-
-gap:15px;
-
-align-items:center;
-
-flex-wrap:wrap;
-
-}
-
-.fixture-title{
-
-font-size:23px;
-
-font-weight:900;
-
-}
-
-.lineup-state{
-
-padding:8px 11px;
-
-border-radius:10px;
-
-background:#3c2f12;
-
-color:#ffd96d;
-
-font-weight:800;
-
-}
-
-.lineup-state.ok{
-
-background:#123a31;
-
-color:#72e7b5;
-
-}
-
-.teams-grid{
-
-display:grid;
-
-grid-template-columns:
-1fr 1fr;
-
-gap:15px;
-
-margin-top:16px;
-
-}
-
-.team-card{
-
-background:#091728;
-
-border:
-1px solid var(--line);
-
-border-radius:14px;
-
-padding:14px;
-
-}
-
-.team-name{
-
-font-weight:900;
-
-margin-bottom:10px;
-
-}
-
-.player-list{
-
-display:grid;
-
-grid-template-columns:
-1fr 1fr;
-
-gap:7px;
-
-}
-
-.player-chip{
-
-padding:8px;
-
-background:#11243a;
-
-border-radius:9px;
-
-font-size:13px;
-
-border:
-1px solid #1e344e;
-
-}
-
-.starter{
-
-color:#72e7b5;
-
-font-weight:800;
-
-}
-
-.sub{
-
-color:var(--muted);
-
-}
-
-.table-wrap{
-
-overflow:auto;
-
-margin-top:15px;
-
-}
-
-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-min-width:1000px;
-
-}
-
-th,
-td{
-
-padding:9px 8px;
-
-border-bottom:
-1px solid var(--line);
-
-text-align:left;
-
-font-size:12px;
-
-}
-
-th{
-
-color:var(--muted);
-
-font-weight:700;
-
-position:sticky;
-
-top:0;
-
-background:#0d1b2d;
-
-}
-
-.proj{
-
-font-weight:900;
-
-color:#8fc8ff;
-
-}
-
-.scanner{
-
-display:grid;
-
-grid-template-columns:
-1fr
-140px
-120px
-120px
-140px
-auto;
-
-gap:8px;
-
-align-items:end;
-
-margin-top:12px;
-
-}
-
-.result{
-
-margin-top:14px;
-
-padding:14px;
-
-border-radius:12px;
-
-background:#091728;
-
-border:
-1px solid var(--line);
-
-}
-
-.result strong{
-
-font-size:20px;
-
-}
-
-.green{
-
-color:#72e7b5;
-
-}
-
-.red{
-
-color:#ff7e91;
-
-}
-
-.yellow{
-
-color:#ffd96d;
-
-}
-
-.small{
-
-font-size:12px;
-
-color:var(--muted);
-
-}
-
-.kpis{
-
-display:grid;
-
-grid-template-columns:
-repeat(4,1fr);
-
-gap:8px;
-
-margin-top:12px;
-
-}
-
-.kpi{
-
-background:#11243a;
-
-padding:12px;
-
-border-radius:10px;
-
-border:
-1px solid var(--line);
-
-}
-
-.kpi-value{
-
-font-size:20px;
-
-font-weight:900;
-
-}
-
-@media(max-width:850px){
-
-.controls{
-
-grid-template-columns:
-1fr 1fr;
-
-}
-
-.teams-grid{
-
-grid-template-columns:
-1fr;
-
-}
-
-.scanner{
-
-grid-template-columns:
-1fr 1fr;
-
-}
-
-.kpis{
-
-grid-template-columns:
-1fr 1fr;
-
-}
-
-}
-
-@media(max-width:520px){
-
-.wrap{
-
-padding:12px;
-
-}
-
-.controls{
-
-grid-template-columns:
-1fr;
-
-}
-
-.matches{
-
-grid-template-columns:
-1fr;
-
-}
-
-.player-list{
-
-grid-template-columns:
-1fr;
-
-}
-
-.scanner{
-
-grid-template-columns:
-1fr;
-
-}
-
-.kpis{
-
-grid-template-columns:
-1fr;
-
-}
-
-}
-
+:root{--bg:#07111f;--panel:#0d1b2d;--panel2:#11243a;--text:#f4f7fb;--muted:#9fb0c5;--line:#243952;--accent:#19c37d;--accent2:#2ea3ff;--danger:#ff647c;--warn:#ffc857}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(180deg,#07111f,#0a1524);color:var(--text)}
+.wrap{max-width:1280px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+h1{margin:0;font-size:29px}h2{margin:0 0 14px}h3{margin:0 0 10px}
+.subtitle{color:var(--muted);margin-top:5px}.small{font-size:12px;color:var(--muted)}
+.badge,.state{padding:8px 12px;border-radius:999px;font-weight:800;font-size:13px}
+.badge{background:#123a31;color:#72e7b5}.badge.bad{background:#3c171e;color:#ff9aaa}
+.panel{background:rgba(13,27,45,.97);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:18px}
+.controls{display:grid;grid-template-columns:180px 1fr auto auto;gap:10px;align-items:end}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+input,select,button{width:100%;min-height:44px;border-radius:10px;border:1px solid var(--line);background:#091728;color:var(--text);padding:10px 12px;font-size:14px}
+button{cursor:pointer;background:var(--accent);color:#06130d;border:0;font-weight:800}
+button.secondary{background:var(--accent2);color:white}button.ghost{background:#172b43;color:white;border:1px solid var(--line)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.matches{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;margin-top:15px}
+.match{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:15px;cursor:pointer;transition:.15s}
+.match:hover,.match.selected{border-color:var(--accent2);transform:translateY(-1px)}
+.match.finished{opacity:.65}.match.next{border-color:#1d6e54}
+.league{font-size:12px;color:var(--muted);margin-bottom:9px}
+.teams{font-size:17px;font-weight:900;line-height:1.4}.date{font-size:12px;color:var(--muted);margin-top:8px}
+.status{font-size:12px;margin-top:10px;color:#8fc8ff}.status.next{color:#72e7b5}.status.done{color:#9aa7b7}
+.section-title{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.fixture-head{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.fixture-title{font-size:23px;font-weight:900}
+.lineup-state{padding:8px 11px;border-radius:10px;background:#3c2f12;color:#ffd96d;font-weight:800}
+.lineup-state.ok{background:#123a31;color:#72e7b5}
+.teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:16px}
+.team-card{background:#091728;border:1px solid var(--line);border-radius:14px;padding:14px}
+.team-name{font-weight:900;margin-bottom:10px}.player-list{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.player-chip{padding:8px;background:#11243a;border-radius:9px;font-size:13px;border:1px solid #1e344e}
+.starter{color:#72e7b5;font-weight:800}.sub{color:var(--muted)}
+.table-wrap{overflow:auto;margin-top:15px}table{width:100%;border-collapse:collapse;min-width:1000px}
+th,td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}
+th{color:var(--muted);font-weight:700;position:sticky;top:0;background:#0d1b2d}
+.proj{font-weight:900;color:#8fc8ff}
+.scanner{display:grid;grid-template-columns:1fr 150px 120px 120px 120px auto;gap:8px;align-items:end}
+.result{margin-top:14px;padding:14px;border-radius:12px;background:#091728;border:1px solid var(--line)}
+.green{color:#72e7b5}.red{color:#ff7e91}.yellow{color:#ffd96d}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.kpi{background:#11243a;padding:12px;border-radius:10px;border:1px solid var(--line)}.kpi-value{font-size:20px;font-weight:900}
+.opps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:12px}
+.opp{background:#091728;border:1px solid var(--line);border-radius:12px;padding:14px}
+.opp .rank{font-size:12px;color:#72e7b5;font-weight:900}.opp .name{font-weight:900;font-size:16px;margin:5px 0}.metric{display:flex;justify-content:space-between;margin-top:7px;font-size:13px}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.filterbar button{width:auto;min-width:120px}
+.hidden{display:none!important}.empty{color:var(--muted);padding:20px;text-align:center}
+.notice{background:#11243a;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:10px}
+@media(max-width:900px){.controls{grid-template-columns:1fr 1fr}.scanner{grid-template-columns:1fr 1fr}.teams-grid{grid-template-columns:1fr}.kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.wrap{padding:12px}.controls,.scanner,.kpis{grid-template-columns:1fr}.matches{grid-template-columns:1fr}.player-list{grid-template-columns:1fr}.filterbar button{width:100%}}
 </style>
-
 </head>
-
 <body>
-
 <div class="wrap">
-
 <header>
-
-<div>
-
-<h1>
-⚽ Fútbol Analytics
-</h1>
-
-<div class="subtitle">
-
-Player Market Scanner ·
-selección de partido ·
-alineaciones
-
-</div>
-
-</div>
-
-<div
-id="apiBadge"
-class="badge"
->
-
-Conectando API…
-
-</div>
-
+  <div>
+    <h1>⚽ Fútbol Analytics</h1>
+    <div class="subtitle">Player Market Scanner · selección inteligente de partido · alineaciones</div>
+  </div>
+  <div id="apiBadge" class="badge">Conectando API…</div>
 </header>
 
-
-<!-- ======================================================
-     SELECCIÓN DE PARTIDO
-======================================================= -->
-
 <section class="panel">
+  <div class="section-title">
+    <div>
+      <h2>1. Escoger partido</h2>
+      <div class="small">V1.7 prioriza partidos próximos. Los partidos terminados no aparecen en el selector principal.</div>
+    </div>
+    <div id="matchCounter" class="state" style="background:#172b43;color:#8fc8ff">0 próximos</div>
+  </div>
 
-<h2>
-1. Escoger partido
-</h2>
+  <div class="controls">
+    <div>
+      <label for="date">Fecha</label>
+      <input id="date" type="date">
+    </div>
+    <div>
+      <label for="filter">Buscar equipo / liga</label>
+      <input id="filter" type="text" placeholder="Ej. Barcelona, Liverpool, Premier">
+    </div>
+    <button id="loadBtn" class="secondary">Cargar partidos</button>
+    <button id="todayBtn" class="ghost">Hoy</button>
+  </div>
 
-<div class="controls">
+  <div class="filterbar">
+    <button id="nextBtn" class="ghost">🟢 Próximos</button>
+    <button id="allBtn" class="ghost">Todos del día</button>
+  </div>
 
-<div>
-
-<label for="date">
-Fecha
-</label>
-
-<input
-id="date"
-type="date"
->
-
-</div>
-
-
-<div>
-
-<label for="filter">
-Buscar equipo / liga
-</label>
-
-<input
-id="filter"
-type="text"
-placeholder="Ej. Barcelona, Liverpool, Premier"
->
-
-</div>
-
-
-<button
-id="loadBtn"
-class="secondary"
->
-
-Cargar partidos
-
-</button>
-
-
-<button
-id="todayBtn"
-class="ghost"
->
-
-Hoy
-
-</button>
-
-</div>
-
-
-<div
-id="matches"
-class="matches"
->
-
-<div class="empty">
-
-Cargando partidos…
-
-</div>
-
-</div>
-
+  <div id="matches"><div class="empty">Cargando partidos…</div></div>
 </section>
 
-
-<!-- ======================================================
-     ANÁLISIS
-======================================================= -->
-
-<section
-id="analysisPanel"
-class="panel"
-hidden
->
-
-<div class="fixture-head">
-
-<div>
-
-<div class="small">
-PARTIDO SELECCIONADO
-</div>
-
-<div
-id="fixtureTitle"
-class="fixture-title"
->
-
-—
-
-</div>
-
-<div
-id="fixtureMeta"
-class="small"
->
-
-—
-
-</div>
-
-</div>
-
-
-<div
-id="lineupBadge"
-class="lineup-state"
->
-
-Comprobando alineaciones…
-
-</div>
-
-</div>
-
-
-<div
-id="lineups"
->
-
-</div>
-
-
-<div style="margin-top:20px">
-
-<h2>
-2. Player Market Scanner
-</h2>
-
-<div class="small">
-
-Las proyecciones son prepartido
-y se basan en estadísticas de temporada
-+ minutos esperados.
-
-</div>
-
-</div>
-
-
-<div
-id="playersTable"
-class="table-wrap"
->
-
-</div>
-
-
-<!-- ======================================================
-     SCANNER
-======================================================= -->
-
-<div
-class="panel"
-style="margin-top:18px;background:#091728"
->
-
-<h3>
-3. Evaluar una línea
-</h3>
-
-
-<div class="scanner">
-
-
-<div>
-
-<label>
-Jugador
-</label>
-
-<select
-id="scanPlayer"
->
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>
-Mercado
-</label>
-
-<select
-id="scanMarket"
->
-
-<option>
-Remates
-</option>
-
-<option>
-Remates a puerta
-</option>
-
-<option>
-Goles
-</option>
-
-<option>
-Asistencias
-</option>
-
-<option>
-Faltas
-</option>
-
-<option>
-Tarjetas
-</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>
-Over/Under
-</label>
-
-<select
-id="scanSide"
->
-
-<option value="over">
-Over
-</option>
-
-<option value="under">
-Under
-</option>
-
-</select>
-
-</div>
-
-
-<div>
-
-<label>
-Línea
-</label>
-
-<input
-id="scanLine"
-type="number"
-min="0.1"
-step="0.1"
-placeholder="1.5"
->
-
-</div>
-
-
-<div>
-
-<label>
-Cuota
-</label>
-
-<input
-id="scanOdds"
-type="number"
-min="1.01"
-step="0.01"
-placeholder="1.80"
->
-
-</div>
-
-
-<button
-id="scanBtn"
->
-
-Analizar
-
-</button>
-
-</div>
-
-
-<div
-id="scanResult"
-class="result"
-hidden
->
-
-</div>
-
-</div>
-
+<section id="analysisPanel" class="panel hidden">
+  <div class="fixture-head">
+    <div>
+      <div class="small">PARTIDO SELECCIONADO</div>
+      <div id="fixtureTitle" class="fixture-title">—</div>
+      <div id="fixtureMeta" class="small">—</div>
+    </div>
+    <div id="lineupBadge" class="lineup-state">Comprobando alineaciones…</div>
+  </div>
+
+  <div id="lineups"></div>
+
+  <div style="margin-top:22px">
+    <div class="section-title">
+      <div>
+        <h2>2. Player Market Scanner</h2>
+        <div class="small">Las proyecciones proceden del backend. No se inventan cuotas ni valor de mercado.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="topCandidates" class="opps"></div>
+  <div id="playersTable" class="table-wrap"></div>
+
+  <div class="panel" style="margin-top:18px;background:#091728">
+    <h3>3. Evaluar una línea</h3>
+    <div class="small">Introduce la línea y la cuota real del bookmaker para calcular Value Edge y FA Rating.</div>
+
+    <div class="scanner" style="margin-top:12px">
+      <div>
+        <label>Jugador</label>
+        <select id="scanPlayer"></select>
+      </div>
+      <div>
+        <label>Mercado</label>
+        <select id="scanMarket">
+          <option>Remates</option>
+          <option>Remates a puerta</option>
+          <option>Goles</option>
+          <option>Asistencias</option>
+          <option>Faltas</option>
+          <option>Tarjetas</option>
+        </select>
+      </div>
+      <div>
+        <label>Over/Under</label>
+        <select id="scanSide"><option value="over">Over</option><option value="under">Under</option></select>
+      </div>
+      <div>
+        <label>Línea</label>
+        <input id="scanLine" type="number" min="0.1" step="0.1" placeholder="1.5">
+      </div>
+      <div>
+        <label>Cuota</label>
+        <input id="scanOdds" type="number" min="1.01" step="0.01" placeholder="1.80">
+      </div>
+      <button id="scanBtn">Analizar</button>
+    </div>
+    <div id="scanResult" class="result hidden"></div>
+  </div>
 </section>
-
 </div>
-
 
 <script>
+const API_BASE="https://stats-backend-jpd3.onrender.com";
+const $=id=>document.getElementById(id);
 
-const API_BASE =
-"https://stats-backend-jpd3.onrender.com";
+const dateInput=$("date"),filterInput=$("filter"),matchesEl=$("matches");
+const apiBadge=$("apiBadge"),analysisPanel=$("analysisPanel"),lineupBadge=$("lineupBadge");
+const lineupsEl=$("lineups"),playersTable=$("playersTable"),topCandidates=$("topCandidates");
+const scanPlayer=$("scanPlayer"),scanMarket=$("scanMarket"),scanSide=$("scanSide");
+const scanLine=$("scanLine"),scanOdds=$("scanOdds"),scanBtn=$("scanBtn"),scanResult=$("scanResult");
+const matchCounter=$("matchCounter");
 
-
-const dateInput =
-document.getElementById("date");
-
-const matchesEl =
-document.getElementById("matches");
-
-const apiBadge =
-document.getElementById("apiBadge");
-
-const analysisPanel =
-document.getElementById("analysisPanel");
-
-const filterInput =
-document.getElementById("filter");
-
-const loadBtn =
-document.getElementById("loadBtn");
-
-const todayBtn =
-document.getElementById("todayBtn");
-
-const lineupBadge =
-document.getElementById("lineupBadge");
-
-const lineupsEl =
-document.getElementById("lineups");
-
-const playersTable =
-document.getElementById("playersTable");
-
-const scanPlayer =
-document.getElementById("scanPlayer");
-
-const scanMarket =
-document.getElementById("scanMarket");
-
-const scanSide =
-document.getElementById("scanSide");
-
-const scanLine =
-document.getElementById("scanLine");
-
-const scanOdds =
-document.getElementById("scanOdds");
-
-const scanBtn =
-document.getElementById("scanBtn");
-
-const scanResult =
-document.getElementById("scanResult");
-
-
-let fixtures = [];
-
-let selectedFixture = null;
-
-let analysis = null;
-
+let fixtures=[],selectedFixture=null,analysis=null,showUpcomingOnly=true;
 
 function localDateISO(){
+  const d=new Date(), offset=d.getTimezoneOffset();
+  return new Date(d.getTime()-offset*60000).toISOString().slice(0,10);
+}
+dateInput.value=localDateISO();
 
-const d =
-new Date();
-
-const offset =
-d.getTimezoneOffset();
-
-return new Date(
-d.getTime()
--
-offset * 60000
-)
-.toISOString()
-.slice(0,10);
-
+async function api(path,options={}){
+  const response=await fetch(API_BASE+path,options);
+  let data={};
+  try{data=await response.json()}catch(e){}
+  if(!response.ok) throw new Error(data.detail||data.message||"Error API");
+  return data;
 }
 
-
-dateInput.value =
-localDateISO();
-
-
-async function api(
-path,
-options={}
-){
-
-const response =
-await fetch(
-API_BASE + path,
-options
-);
-
-const data =
-await response.json();
-
-if(!response.ok){
-
-throw new Error(
-data.detail ||
-data.message ||
-"Error API"
-);
-
+function escapeHtml(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
-
-return data;
-
+function formatDate(iso){
+  if(!iso)return"Fecha no disponible";
+  return new Date(iso).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
 }
-
+function statusCode(f){return String(f?.status?.short||"").toUpperCase()}
+function isUpcoming(f){return ["NS","TBD"].includes(statusCode(f))}
+function isFinished(f){return ["FT","AET","PEN"].includes(statusCode(f))}
+function statusLabel(f){
+  const s=statusCode(f);
+  if(s==="NS")return"Próximo";
+  if(s==="TBD")return"Por confirmar";
+  if(isFinished(f))return"Finalizado";
+  if(["PST","CANC","ABD","AWD","WO"].includes(s))return"Cancelado/pospuesto";
+  return f?.status?.long||s||"Estado";
+}
 
 async function testAPI(){
-
-try{
-
-const data =
-await api(
-"/api/test-apifootball"
-);
-
-if(
-data.status ===
-"connected"
-){
-
-apiBadge.textContent =
-"API conectada";
-
-apiBadge.style.background =
-"#123a31";
-
-apiBadge.style.color =
-"#72e7b5";
-
-}else{
-
-throw new Error(
-data.message ||
-"API no conectada"
-);
-
+  try{
+    const data=await api("/api/test-apifootball");
+    if(data.status==="connected"){
+      apiBadge.textContent="API conectada";
+      apiBadge.className="badge";
+    }else throw new Error(data.message||"API no conectada");
+  }catch(err){
+    apiBadge.textContent="API: revisar";
+    apiBadge.className="badge bad";
+    console.error(err);
+  }
 }
-
-}catch(err){
-
-apiBadge.textContent =
-"API: revisar";
-
-apiBadge.style.background =
-"#3c171e";
-
-apiBadge.style.color =
-"#ff9aaa";
-
-console.error(err);
-
-}
-
-}
-
-
-function formatDate(
-iso
-){
-
-if(!iso){
-
-return "Fecha no disponible";
-
-}
-
-const d =
-new Date(iso);
-
-return d.toLocaleString(
-"es-CO",
-{
-
-day:"2-digit",
-
-month:"2-digit",
-
-year:"numeric",
-
-hour:"2-digit",
-
-minute:"2-digit"
-
-}
-
-);
-
-}
-
-
-function escapeHtml(
-value
-){
-
-return String(
-value ?? ""
-)
-.replace(
-/[&<>"']/g,
-c => ({
-
-"&":"&amp;",
-
-"<":"&lt;",
-
-">":"&gt;",
-
-'"':"&quot;",
-
-"'":"&#039;"
-
-}[c])
-);
-
-}
-
 
 function renderFixtures(){
+  const q=filterInput.value.trim().toLowerCase();
+  let list=fixtures.filter(f=>{
+    const text=[f.home?.name,f.away?.name,f.league?.name,f.league?.country].filter(Boolean).join(" ").toLowerCase();
+    return text.includes(q);
+  });
+  if(showUpcomingOnly) list=list.filter(isUpcoming);
 
-const q =
-filterInput.value
-.trim()
-.toLowerCase();
+  matchCounter.textContent=`${list.length} ${showUpcomingOnly?"próximos":"partidos"}`;
 
+  if(!list.length){
+    matchesEl.innerHTML=`<div class="empty">${showUpcomingOnly?"No hay partidos próximos para esta fecha o filtro. Pulsa «Todos del día» para revisar el resto.":"No hay partidos para ese filtro."}</div>`;
+    return;
+  }
 
-const filtered =
-fixtures.filter(
-f => {
+  list.sort((a,b)=>new Date(a.date)-new Date(b.date));
+  matchesEl.innerHTML=list.map(f=>{
+    const upcoming=isUpcoming(f), finished=isFinished(f);
+    return `<div class="match ${upcoming?"next":""} ${finished?"finished":""} ${selectedFixture?.fixture_id===f.fixture_id?"selected":""}" data-id="${f.fixture_id}">
+      <div class="league">${escapeHtml(f.league?.name||"Competición")} · ${escapeHtml(f.league?.country||"")}</div>
+      <div class="teams">${escapeHtml(f.home?.name||"Local")}<br><span class="small">vs</span><br>${escapeHtml(f.away?.name||"Visitante")}</div>
+      <div class="date">${formatDate(f.date)}</div>
+      <div class="status ${upcoming?"next":"done"}">${escapeHtml(statusLabel(f))}</div>
+    </div>`;
+  }).join("");
 
-const text = [
-
-f.home?.name,
-
-f.away?.name,
-
-f.league?.name,
-
-f.league?.country
-
-]
-.filter(Boolean)
-.join(" ")
-.toLowerCase();
-
-
-return text.includes(q);
-
+  matchesEl.querySelectorAll(".match").forEach(card=>{
+    card.addEventListener("click",()=>{
+      const id=Number(card.dataset.id);
+      selectedFixture=fixtures.find(f=>f.fixture_id===id)||null;
+      renderFixtures();
+      loadAnalysis(id);
+      window.scrollTo({top:document.getElementById("analysisPanel").offsetTop-15,behavior:"smooth"});
+    });
+  });
 }
-);
-
-
-if(!filtered.length){
-
-matchesEl.innerHTML =
-'<div class="empty">No hay partidos para ese filtro.</div>';
-
-return;
-
-}
-
-
-matchesEl.innerHTML =
-filtered.map(
-f => `
-
-<div
-class="match ${
-selectedFixture?.fixture_id ===
-f.fixture_id
-? "selected"
-: ""
-}"
-data-id="${f.fixture_id}"
->
-
-<div class="league">
-
-${escapeHtml(
-f.league?.name ||
-"Competición"
-)}
-
-·
-
-${escapeHtml(
-f.league?.country ||
-""
-)}
-
-</div>
-
-
-<div class="teams">
-
-${escapeHtml(
-f.home?.name ||
-"Local"
-)}
-
-<br>
-
-vs
-
-<br>
-
-${escapeHtml(
-f.away?.name ||
-"Visitante"
-)}
-
-</div>
-
-
-<div class="date">
-
-${formatDate(f.date)}
-
-</div>
-
-
-<div class="status">
-
-${escapeHtml(
-f.status?.long ||
-f.status?.short ||
-""
-)}
-
-</div>
-
-</div>
-
-`
-).join("");
-
-
-matchesEl
-.querySelectorAll(
-".match"
-)
-.forEach(
-card => {
-
-card.addEventListener(
-"click",
-() => {
-
-const id =
-Number(
-card.dataset.id
-);
-
-selectedFixture =
-fixtures.find(
-f =>
-f.fixture_id === id
-)
-|| null;
-
-renderFixtures();
-
-loadAnalysis(id);
-
-}
-);
-
-}
-);
-
-}
-
 
 async function loadFixtures(){
-
-matchesEl.innerHTML =
-'<div class="empty">Consultando partidos…</div>';
-
-
-try{
-
-const data =
-await api(
-"/api/apifootball-fixtures?date="
-+
-encodeURIComponent(
-dateInput.value
-)
-);
-
-fixtures =
-data.fixtures || [];
-
-selectedFixture =
-null;
-
-analysisPanel.hidden =
-true;
-
-renderFixtures();
-
-}catch(err){
-
-matchesEl.innerHTML =
-`
-
-<div class="empty">
-
-Error:
-
-${escapeHtml(
-err.message
-)}
-
-</div>
-
-`;
-
+  matchesEl.innerHTML='<div class="empty">Consultando partidos…</div>';
+  try{
+    const data=await api("/api/apifootball-fixtures?date="+encodeURIComponent(dateInput.value));
+    fixtures=data.fixtures||[];
+    selectedFixture=null;
+    analysis=null;
+    analysisPanel.classList.add("hidden");
+    renderFixtures();
+  }catch(err){
+    matchesEl.innerHTML=`<div class="empty"><span class="red">Error:</span> ${escapeHtml(err.message)}</div>`;
+  }
 }
 
+function renderLineups(data){
+  if(!data?.lineups?.length){
+    lineupsEl.innerHTML='<div class="notice">La API confirmó datos del partido, pero todavía no hay alineación detallada para mostrar.</div>';
+    return;
+  }
+  lineupsEl.innerHTML=`<div class="teams-grid">${data.lineups.map(team=>`
+    <div class="team-card">
+      <div class="team-name">${escapeHtml(team.team?.name||"Equipo")} ${team.formation?"· "+escapeHtml(team.formation):""}</div>
+      <div class="small" style="margin-bottom:8px">Titulares confirmados: ${team.starter_count??0}</div>
+      <div class="player-list">${(team.starters||[]).map(p=>`
+        <div class="player-chip"><span class="starter">●</span> ${escapeHtml(p.name)} <span class="small">${escapeHtml(p.position||"")}</span></div>
+      `).join("")}</div>
+    </div>`).join("")}</div>`;
 }
 
+function num(v){return typeof v==="number"?v:Number(v||0)}
+function projectionFor(p,market){return num(p?.projection?.[market])}
 
-function renderLineups(
-data
-){
-
-if(
-!data.lineups?.length
-){
-
-lineupsEl.innerHTML =
-"";
-
-return;
-
+function renderTopCandidates(players){
+  const starters=players.filter(p=>p.starter);
+  const markets=["Remates","Remates a puerta","Goles","Asistencias","Faltas","Tarjetas"];
+  const candidates=[];
+  starters.forEach(p=>markets.forEach(m=>{
+    const value=projectionFor(p,m);
+    if(value>0)candidates.push({player:p,market:m,value});
+  }));
+  candidates.sort((a,b)=>b.value-a.value);
+  const top=candidates.slice(0,6);
+  if(!top.length){
+    topCandidates.innerHTML='<div class="empty">No hay proyecciones suficientes para generar candidatos.</div>';
+    return;
+  }
+  topCandidates.innerHTML=top.map((x,i)=>`
+    <div class="opp">
+      <div class="rank">#${i+1} CANDIDATO</div>
+      <div class="name">${escapeHtml(x.player.player)}</div>
+      <div class="metric"><span>Mercado</span><b>${escapeHtml(x.market)}</b></div>
+      <div class="metric"><span>Proyección</span><b class="proj">${x.value.toFixed(2)}</b></div>
+      <div class="metric"><span>Rol</span><b>${x.player.starter?"Titular":"Suplente"}</b></div>
+      <div class="small" style="margin-top:10px">La proyección no equivale por sí sola a valor. Introduce la línea y cuota real en el scanner.</div>
+    </div>`).join("");
 }
 
+function renderPlayers(players){
+  const ordered=[...players.filter(p=>p.starter),...players.filter(p=>!p.starter)];
+  playersTable.innerHTML=`<table>
+    <thead><tr>
+      <th>Jugador</th><th>Equipo</th><th>Rol</th><th>Pos.</th><th>Min. esp.</th>
+      <th>Remates/90</th><th>RAP/90</th><th>Goles/90</th><th>Asist./90</th><th>Faltas/90</th><th>Tarj./90</th>
+    </tr></thead>
+    <tbody>${ordered.map(p=>`<tr>
+      <td><strong>${escapeHtml(p.player)}</strong></td>
+      <td>${escapeHtml(p.team)}</td>
+      <td class="${p.starter?"starter":"sub"}">${p.starter?"TITULAR":"SUPLENTE"}</td>
+      <td>${escapeHtml(p.position||"")}</td>
+      <td>${p.expected_minutes??0}</td>
+      <td class="proj">${projectionFor(p,"Remates").toFixed(2)}</td>
+      <td class="proj">${projectionFor(p,"Remates a puerta").toFixed(2)}</td>
+      <td class="proj">${projectionFor(p,"Goles").toFixed(2)}</td>
+      <td class="proj">${projectionFor(p,"Asistencias").toFixed(2)}</td>
+      <td class="proj">${projectionFor(p,"Faltas").toFixed(2)}</td>
+      <td class="proj">${projectionFor(p,"Tarjetas").toFixed(2)}</td>
+    </tr>`).join("")}</tbody>
+  </table>`;
 
-lineupsEl.innerHTML = `
-
-<div class="teams-grid">
-
-${data.lineups.map(
-team => `
-
-<div class="team-card">
-
-<div class="team-name">
-
-${escapeHtml(
-team.team?.name ||
-"Equipo"
-)}
-
-${
-team.formation
-?
-" · "
-+
-escapeHtml(
-team.formation
-)
-:
-""
+  scanPlayer.innerHTML=ordered.map(p=>`<option value="${escapeHtml(p.player_id)}">${escapeHtml(p.player)} · ${p.starter?"Titular":"Suplente"}</option>`).join("");
 }
 
-</div>
+async function loadAnalysis(fixtureId){
+  analysisPanel.classList.remove("hidden");
+  $("fixtureTitle").textContent=`${selectedFixture?.home?.name||"Local"} vs ${selectedFixture?.away?.name||"Visitante"}`;
+  $("fixtureMeta").textContent=`${selectedFixture?.league?.name||""} · ${formatDate(selectedFixture?.date)}`;
+  lineupBadge.textContent="Consultando alineaciones…";
+  lineupBadge.className="lineup-state";
+  lineupsEl.innerHTML="";
+  playersTable.innerHTML='<div class="empty">Analizando partido…</div>';
+  topCandidates.innerHTML="";
+  scanResult.classList.add("hidden");
 
+  try{
+    const data=await api("/api/fixture-analysis?fixture_id="+fixtureId);
+    analysis=data;
 
-<div
-class="small"
-style="margin-bottom:8px"
->
+    if(!data.available){
+      lineupBadge.textContent="Alineaciones aún no disponibles";
+      playersTable.innerHTML=`<div class="empty">${escapeHtml(data.message||"Sin datos.")}<br><br><button id="retryBtn" class="secondary" style="max-width:220px">Volver a comprobar</button></div>`;
+      $("retryBtn").addEventListener("click",()=>loadAnalysis(fixtureId));
+      return;
+    }
 
-Titulares confirmados:
+    const players=data.players||[];
+    lineupBadge.textContent="✓ Alineaciones confirmadas";
+    lineupBadge.className="lineup-state ok";
 
-${team.starter_count}
+    try{
+      const lineupData=await api("/api/fixture-lineups?fixture_id="+fixtureId);
+      renderLineups(lineupData);
+    }catch(e){
+      renderLineups({lineups:[]});
+    }
 
-</div>
-
-
-<div class="player-list">
-
-${
-(team.starters || [])
-.map(
-p => `
-
-<div class="player-chip">
-
-<span class="starter">
-●
-</span>
-
-${escapeHtml(
-p.name
-)}
-
-<span class="small">
-
-${escapeHtml(
-p.position || ""
-)}
-
-</span>
-
-</div>
-
-`
-)
-.join("")
+    renderTopCandidates(players);
+    renderPlayers(players);
+  }catch(err){
+    lineupBadge.textContent="Error";
+    playersTable.innerHTML=`<div class="empty"><span class="red">${escapeHtml(err.message)}</span></div>`;
+  }
 }
-
-</div>
-
-</div>
-
-`
-).join("")}
-
-</div>
-
-`;
-
-}
-
-
-function renderPlayers(
-players
-){
-
-const starters =
-players.filter(
-p => p.starter
-);
-
-const subs =
-players.filter(
-p => !p.starter
-);
-
-const ordered =
-[
-...starters,
-...subs
-];
-
-
-playersTable.innerHTML = `
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>
-Jugador
-</th>
-
-<th>
-Equipo
-</th>
-
-<th>
-Rol
-</th>
-
-<th>
-Pos.
-</th>
-
-<th>
-Min. esp.
-</th>
-
-<th>
-Remates/90
-</th>
-
-<th>
-RAP/90
-</th>
-
-<th>
-Goles/90
-</th>
-
-<th>
-Asist./90
-</th>
-
-<th>
-Faltas/90
-</th>
-
-<th>
-Tarj./90
-</th>
-
-</tr>
-
-</thead>
-
-
-<tbody>
-
-${ordered.map(
-p => `
-
-<tr>
-
-<td>
-
-<strong>
-
-${escapeHtml(
-p.player
-)}
-
-</strong>
-
-</td>
-
-
-<td>
-
-${escapeHtml(
-p.team
-)}
-
-</td>
-
-
-<td
-class="${
-p.starter
-?
-"starter"
-:
-"sub"
-}"
->
-
-${
-p.starter
-?
-"TITULAR"
-:
-"SUPLENTE"
-}
-
-</td>
-
-
-<td>
-
-${escapeHtml(
-p.position || ""
-)}
-
-</td>
-
-
-<td>
-
-${p.expected_minutes}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Remates"]
-??
-0
-}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Remates a puerta"]
-??
-0
-}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Goles"]
-??
-0
-}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Asistencias"]
-??
-0
-}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Faltas"]
-??
-0
-}
-
-</td>
-
-
-<td class="proj">
-
-${
-p.projection?.["Tarjetas"]
-??
-0
-}
-
-</td>
-
-</tr>
-
-`
-).join("")}
-
-</tbody>
-
-</table>
-
-`;
-
-
-scanPlayer.innerHTML =
-ordered.map(
-p =>
-
-`
-
-<option
-value="${p.player_id}"
->
-
-${escapeHtml(
-p.player
-)}
-
-·
-
-${
-p.starter
-?
-"Titular"
-:
-"Suplente"
-}
-
-</option>
-
-`
-)
-.join("");
-
-}
-
-
-async function loadAnalysis(
-fixtureId
-){
-
-analysisPanel.hidden =
-false;
-
-
-document.getElementById(
-"fixtureTitle"
-).textContent =
-
-`
-
-${
-selectedFixture?.home?.name
-||
-"Local"
-}
-
-vs
-
-${
-selectedFixture?.away?.name
-||
-"Visitante"
-}
-
-`;
-
-
-document.getElementById(
-"fixtureMeta"
-).textContent =
-
-`
-
-${
-selectedFixture?.league?.name
-||
-""
-}
-
-·
-
-${
-formatDate(
-selectedFixture?.date
-)
-}
-
-`;
-
-
-lineupBadge.textContent =
-"Consultando alineaciones…";
-
-lineupBadge.className =
-"lineup-state";
-
-
-lineupsEl.innerHTML =
-"";
-
-
-playersTable.innerHTML =
-'<div class="empty">Analizando partido…</div>';
-
-
-scanResult.hidden =
-true;
-
-
-try{
-
-const data =
-await api(
-"/api/fixture-analysis?fixture_id="
-+
-fixtureId
-);
-
-analysis =
-data;
-
-
-if(!data.available){
-
-lineupBadge.textContent =
-"Alineaciones aún no disponibles";
-
-lineupBadge.className =
-"lineup-state";
-
-
-playersTable.innerHTML = `
-
-<div class="empty">
-
-${escapeHtml(
-data.message ||
-"Sin datos."
-)}
-
-<br><br>
-
-<button
-id="retryBtn"
-class="secondary"
-style="max-width:220px"
->
-
-Volver a comprobar
-
-</button>
-
-</div>
-
-`;
-
-
-document
-.getElementById(
-"retryBtn"
-)
-.addEventListener(
-"click",
-() =>
-loadAnalysis(
-fixtureId
-)
-);
-
-return;
-
-}
-
-
-lineupBadge.textContent =
-"✓ Alineaciones confirmadas";
-
-lineupBadge.className =
-"lineup-state ok";
-
-
-const lineupData =
-await api(
-"/api/fixture-lineups?fixture_id="
-+
-fixtureId
-);
-
-
-renderLineups(
-lineupData
-);
-
-
-renderPlayers(
-data.players || []
-);
-
-
-}catch(err){
-
-lineupBadge.textContent =
-"Error";
-
-
-playersTable.innerHTML = `
-
-<div class="empty">
-
-${escapeHtml(
-err.message
-)}
-
-</div>
-
-`;
-
-}
-
-}
-
 
 function getSelectedPlayer(){
-
-if(!analysis?.players){
-
-return null;
-
+  return analysis?.players?.find(p=>String(p.player_id)===String(scanPlayer.value))||null;
 }
 
-return analysis.players.find(
-p =>
-String(
-p.player_id
-)
-===
-String(
-scanPlayer.value
-)
-);
-
-}
-
-
-scanMarket.addEventListener(
-"change",
-() => {
-
-const p =
-getSelectedPlayer();
-
-if(!p)
-return;
-
-const projection =
-p.projection?.[
-scanMarket.value
-];
-
-if(
-typeof projection ===
-"number"
-){
-
-scanLine.placeholder =
-projection >= 0.8
-?
-"Ej. 1.5"
-:
-"Ej. 0.5";
-
-}
-
-}
-);
-
-
-scanBtn.addEventListener(
-"click",
-async () => {
-
-const p =
-getSelectedPlayer();
-
-const line =
-Number(
-scanLine.value
-);
-
-const odds =
-Number(
-scanOdds.value
-);
-
-
-if(!p){
-
-scanResult.hidden =
-false;
-
-scanResult.innerHTML =
-'<span class="red">Selecciona un jugador.</span>';
-
-return;
-
-}
-
-
-if(
-!(line > 0)
-||
-!(odds > 1)
-){
-
-scanResult.hidden =
-false;
-
-scanResult.innerHTML =
-'<span class="yellow">Introduce una línea y una cuota válidas.</span>';
-
-return;
-
-}
-
-
-const projection =
-Number(
-p.projection?.[
-scanMarket.value
-]
-||
-0
-);
-
-
-scanResult.hidden =
-false;
-
-scanResult.innerHTML =
-"Calculando…";
-
-
-try{
-
-const result =
-await api(
-"/api/scanner-projection",
-{
-
-method:
-"POST",
-
-headers:
-{
-"Content-Type":
-"application/json"
-},
-
-body:
-JSON.stringify({
-
-player:
-p.player,
-
-market:
-scanMarket.value,
-
-side:
-scanSide.value,
-
-line:
-line,
-
-odds:
-odds,
-
-projection:
-projection,
-
-bankroll:
-0,
-
-stake_percent:
-2,
-
-confidence:
-p.starter
-?
-78
-:
-55
-
-})
-
-}
-);
-
-
-const cls =
-result.value_positive
-?
-"green"
-:
-"red";
-
-
-scanResult.innerHTML = `
-
-<div class="${cls}">
-
-<strong>
-
-${escapeHtml(
-result.signal
-)}
-
-</strong>
-
-</div>
-
-
-<div style="margin-top:8px">
-
-<b>
-
-${escapeHtml(
-result.player
-)}
-
-</b>
-
-·
-
-${escapeHtml(
-result.market
-)}
-
-${escapeHtml(
-result.side
-)}
-
-${result.line}
-
-· cuota
-
-${result.odds}
-
-</div>
-
-
-<div
-style="
-margin-top:8px;
-display:grid;
-grid-template-columns:
-repeat(4,1fr);
-gap:8px
-"
->
-
-<div>
-
-<span class="small">
-Proyección
-</span>
-
-<br>
-
-<b>
-${result.projection}
-</b>
-
-</div>
-
-
-<div>
-
-<span class="small">
-Prob. FA
-</span>
-
-<br>
-
-<b>
-${result.probability_fa}%
-</b>
-
-</div>
-
-
-<div>
-
-<span class="small">
-Value Edge
-</span>
-
-<br>
-
-<b>
-${result.value_edge}%
-</b>
-
-</div>
-
-
-<div>
-
-<span class="small">
-FA Rating
-</span>
-
-<br>
-
-<b>
-${result.fa_rating}/100
-</b>
-
-</div>
-
-</div>
-
-
-<div
-class="small"
-style="margin-top:10px"
->
-
-Riesgo:
-${result.risk}.
-
-Las cuotas deben verificarse
-en el bookmaker antes de publicar.
-
-</div>
-
-`;
-
-}catch(err){
-
-scanResult.innerHTML =
-`
-
-<span class="red">
-
-${escapeHtml(
-err.message
-)}
-
-</span>
-
-`;
-
-}
-
-}
-);
-
-
-loadBtn.addEventListener(
-"click",
-loadFixtures
-);
-
-
-todayBtn.addEventListener(
-"click",
-() => {
-
-dateInput.value =
-localDateISO();
-
-loadFixtures();
-
-}
-);
-
-
-filterInput.addEventListener(
-"input",
-renderFixtures
-);
-
+scanMarket.addEventListener("change",()=>{
+  const p=getSelectedPlayer(); if(!p)return;
+  const projection=projectionFor(p,scanMarket.value);
+  scanLine.placeholder=projection>=0.8?"Ej. 1.5":"Ej. 0.5";
+});
+
+scanPlayer.addEventListener("change",()=>{
+  const p=getSelectedPlayer(); if(!p)return;
+  const projection=projectionFor(p,scanMarket.value);
+  scanLine.placeholder=projection>=0.8?"Ej. 1.5":"Ej. 0.5";
+});
+
+scanBtn.addEventListener("click",async()=>{
+  const p=getSelectedPlayer(),line=Number(scanLine.value),odds=Number(scanOdds.value);
+  if(!p){scanResult.classList.remove("hidden");scanResult.innerHTML='<span class="red">Selecciona un jugador.</span>';return}
+  if(!(line>0)||!(odds>1)){scanResult.classList.remove("hidden");scanResult.innerHTML='<span class="yellow">Introduce una línea y una cuota válidas.</span>';return}
+
+  const projection=projectionFor(p,scanMarket.value);
+  scanResult.classList.remove("hidden");scanResult.innerHTML="Calculando…";
+
+  try{
+    const result=await api("/api/scanner-projection",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        player:p.player,market:scanMarket.value,side:scanSide.value,line,odds,projection,
+        bankroll:0,stake_percent:2,confidence:p.starter?78:55
+      })
+    });
+    const cls=result.value_positive?"green":"red";
+    scanResult.innerHTML=`
+      <div class="${cls}"><strong>${escapeHtml(result.signal||"Resultado")}</strong></div>
+      <div style="margin-top:8px"><b>${escapeHtml(result.player||p.player)}</b> · ${escapeHtml(result.market||scanMarket.value)} ${escapeHtml(result.side||scanSide.value)} ${result.line} · cuota ${result.odds}</div>
+      <div class="kpis">
+        <div class="kpi"><span class="small">Proyección</span><div class="kpi-value">${result.projection??projection}</div></div>
+        <div class="kpi"><span class="small">Prob. FA</span><div class="kpi-value">${result.probability_fa??"—"}%</div></div>
+        <div class="kpi"><span class="small">Value Edge</span><div class="kpi-value">${result.value_edge??"—"}%</div></div>
+        <div class="kpi"><span class="small">FA Rating</span><div class="kpi-value">${result.fa_rating??"—"}/100</div></div>
+      </div>
+      <div class="small" style="margin-top:10px">Riesgo: ${escapeHtml(result.risk||"—")}. Las cuotas deben verificarse en el bookmaker antes de publicar.</div>`;
+  }catch(err){
+    scanResult.innerHTML=`<span class="red">${escapeHtml(err.message)}</span>`;
+  }
+});
+
+$("loadBtn").addEventListener("click",loadFixtures);
+$("todayBtn").addEventListener("click",()=>{dateInput.value=localDateISO();loadFixtures()});
+$("nextBtn").addEventListener("click",()=>{showUpcomingOnly=true;renderFixtures()});
+$("allBtn").addEventListener("click",()=>{showUpcomingOnly=false;renderFixtures()});
+filterInput.addEventListener("input",renderFixtures);
 
 testAPI();
-
 loadFixtures();
-
 </script>
-
 </body>
-
 </html>
