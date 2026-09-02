@@ -108,7 +108,112 @@ header{display:flex;justify-content:space-between;align-items:center;gap:16px;fl
 <div id="toast" class="toast hidden"></div>
 <footer class="footer">FÚTBOL ANALYTICS V2.2.7 · Sportmonks principal · No representa asesoría financiera ni garantiza resultados.</footer>
 </div>
-<script src="fa-core.js"></script>
+<script>
+/* Fútbol Analytics core inlined: no external JS dependency */
+(function(global){
+  const STATUS = {
+    upcoming: new Set(['NS','TBD']),
+    finished: new Set(['FT','AET','PEN','CANC','ABD','AWD','WO','PST'])
+  };
+
+  function num(v, fallback=0){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function escapeHtml(v){
+    return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+  function statusCode(f){
+    return String(f?.status?.short_name || f?.status?.short || '').toUpperCase();
+  }
+  function isUpcoming(f){ return STATUS.upcoming.has(statusCode(f)); }
+  function isFinished(f){ return STATUS.finished.has(statusCode(f)); }
+  function formatDate(iso){
+    if(!iso) return 'Fecha no disponible';
+    const d = new Date(iso);
+    if(Number.isNaN(d.getTime())) return 'Fecha no disponible';
+    return d.toLocaleString('es-CO',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  }
+  function relativeTime(iso, nowMs=Date.now()){
+    const t = new Date(iso).getTime();
+    if(!Number.isFinite(t)) return '';
+    const diffHours = (t-nowMs)/36e5;
+    if(diffHours < -1) return 'Finalizado';
+    if(diffHours < 1) return 'En menos de 1 h';
+    if(diffHours < 6) return `En ${Math.round(diffHours)} h`;
+    if(diffHours < 24) return `En ${Math.round(diffHours)} h`;
+    const days = diffHours/24;
+    return `En ${Math.ceil(days)} día${Math.ceil(days)===1?'':'s'}`;
+  }
+  function leaguePriority(f){
+    const id = Number(f?.league?.id||0);
+    const known = {39:100,140:100,135:100,78:98,61:96,2:94,3:90,848:88,239:92,128:84,94:84,71:84,253:76,262:80};
+    if(known[id]) return known[id];
+    const name = String(f?.league?.name||'').toLowerCase();
+    if(/champions|premier|la liga|serie a|bundesliga|ligue 1/.test(name)) return 88;
+    return 35;
+  }
+  function smartScore(f, nowMs=Date.now()){
+    const status = isUpcoming(f) ? 35 : 0;
+    const hours = Math.max(0,(new Date(f?.date).getTime()-nowMs)/36e5);
+    const proximity = hours<3 ? 30 : hours<8 ? 24 : hours<24 ? 18 : hours<48 ? 10 : 4;
+    return leaguePriority(f)+status+proximity;
+  }
+  function normalizeFixtures(raw){
+    return (raw||[]).filter(Boolean).map(f => ({
+      ...f,
+      fixture_id: num(f.fixture_id),
+      timestamp: num(f.timestamp),
+      date: f.date || (f.timestamp ? new Date(f.timestamp*1000).toISOString() : null),
+      season: f.season || {}, league: f.league || {}, home: f.home || {}, away: f.away || {}, status: f.status || {}
+    }));
+  }
+  function sortFixtures(fixtures, mode='smart', nowMs=Date.now()){
+    const list = [...fixtures];
+    if(mode==='smart') return list.filter(isUpcoming).sort((a,b)=>smartScore(b,nowMs)-smartScore(a,nowMs));
+    if(mode==='next') return list.filter(isUpcoming).sort((a,b)=>num(a.timestamp)-num(b.timestamp));
+    return list.sort((a,b)=>num(a.timestamp)-num(b.timestamp));
+  }
+  function bestCandidateSummary(c){
+    return {
+      player: c?.player || 'Jugador',
+      team: c?.team || 'Equipo',
+      market: c?.market || 'Mercado',
+      projection: num(c?.projection),
+      side: String(c?.reference_side||'').toUpperCase(),
+      line: num(c?.reference_line),
+      probability: num(c?.probability_fa),
+      rating: num(c?.fa_rating),
+      confidence: num(c?.confidence),
+      recommendation: c?.recommendation || 'REVISION',
+      sampleBasis: c?.sample_quality_basis || 'muestra_insuficiente',
+      confirmedLineup: Boolean(c?.confirmed_lineup),
+      statsAvailable: Boolean(c?.stats_available)
+    };
+  }
+  function recommendationTone(r){
+    if(r==='PICK_RECOMENDADO') return 'strong';
+    if(r==='PUBLICABLE') return 'good';
+    if(r==='PICK_PRECAUCION') return 'warn';
+    return 'muted';
+  }
+  function buildValidationSnapshot(fixture, scan, analysis){
+    return {
+      saved_at: new Date().toISOString(),
+      fixture: fixture ? {fixture_id: fixture.fixture_id, date: fixture.date, home: fixture.home?.name, away: fixture.away?.name, league: fixture.league?.name, season_id: fixture.season?.id} : null,
+      scanner: scan ? {
+        motor: scan.motor,
+        count: scan.count,
+        candidates: (scan.candidates||[]).map(bestCandidateSummary)
+      } : null,
+      analysis: analysis ? {players_analyzed: analysis.players?.length||0, lineups_confirmed: Boolean(analysis.lineups_confirmed), season: analysis.season} : null
+    };
+  }
+
+  global.FA = {num, escapeHtml, statusCode, isUpcoming, isFinished, formatDate, relativeTime, leaguePriority, smartScore, normalizeFixtures, sortFixtures, bestCandidateSummary, recommendationTone, buildValidationSnapshot};
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
 <script>
 const API_BASE='https://stats-backend-jpd3.onrender.com';
 const $=id=>document.getElementById(id);
